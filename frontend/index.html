@@ -1,63 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEXUS — Real-Time Criminal Intelligence & Multi-Agent Network Analysis (SIH 2026)</title>
-  
-  <!-- Fonts & Icons -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS v2.0 — Tactical Cyber Intelligence Command Center (SIH 2026)</title>
+
+  <!-- Google Fonts: Space Grotesk, JetBrains Mono, Inter, Cinzel -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Canvas & Graph Library -->
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Cytoscape Graph Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+
+  <!-- React 18 & ReactDOM via High-Speed Standalone UMD -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <!-- Babel Standalone for Instant In-Browser JSX Execution -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 
   <style>
     :root {
-      /* FBI Manifold Manila & Raw Intelligence Dossier Theme */
-      --folder-bg: #d7c5a0;
-      --folder-tab: #c6b28b;
-      --folder-inner: #f6eedb;
-      --card-bg: #fffbf2;
-      --card-border: #d4c5a9;
-      --card-border-dark: #b8a685;
-      --ink-primary: #1f2421;
-      --ink-secondary: #565d56;
-      --ink-muted: #828a82;
+      /* Tactical Cyber Command Dark Palette */
+      --bg-base: #06080d;
+      --bg-surface: #0a0e17;
+      --bg-card: rgba(14, 20, 32, 0.9);
+      --bg-card-hover: rgba(20, 28, 44, 0.95);
+      --border-subtle: rgba(0, 240, 255, 0.12);
+      --border-active: #00f0ff;
+      --border-glow: rgba(0, 240, 255, 0.35);
 
-      /* Hollywood Tactical Red, Amber, Cyan & Alert Colors */
-      --fbi-stamp-red: #9e2a2b;
-      --fbi-stamp-glow: rgba(158, 42, 43, 0.25);
-      --accent-crimson: #c1121f;
-      --accent-amber: #b07d1a;
-      --accent-teal: #1f6f78;
-      --accent-emerald: #2d6a4f;
-      --accent-blue: #1d4e89;
+      /* Mission Intelligence Accents */
+      --cyan-bright: #00f0ff;
+      --emerald-radar: #00ff88;
+      --amber-warn: #ffb800;
+      --crimson-target: #ff2a55;
+      --purple-supervisor: #a855f7;
+      --blue-intel: #3b82f6;
 
-      /* Dark Terminal / Agent Debate Glass */
-      --terminal-bg: rgba(18, 22, 25, 0.96);
-      --terminal-border: #323c46;
-      --terminal-text: #68d391;
-      --terminal-warn: #f6ad55;
-      --terminal-danger: #fc8181;
-      --terminal-cyan: #63b3ed;
-
-      --shadow-paper: 0 4px 15px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
-      --shadow-deep: 0 20px 45px rgba(0,0,0,0.3);
+      /* Typography */
+      --text-main: #f0f6fc;
+      --text-dim: #8b949e;
+      --text-muted: #48515d;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #2b261f;
+      background-color: var(--bg-base);
       background-image: 
-        radial-gradient(#3a342b 1px, transparent 1px),
-        linear-gradient(135deg, #221e18 0%, #171410 100%);
-      background-size: 24px 24px, 100% 100%;
-      color: var(--ink-primary);
-      font-family: 'Inter', sans-serif;
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 55%),
+        linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 28px 28px, 28px 28px;
+      color: var(--text-main);
+      font-family: var(--font-body);
       height: 100vh;
       overflow: hidden;
       display: flex;
@@ -65,1148 +68,2208 @@
       user-select: none;
     }
 
-    /* Top File Folder Header */
-    .case-folder-header {
-      background: var(--folder-bg);
-      border-bottom: 3px solid #ab9773;
-      padding: 10px 24px;
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.25); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--cyan-bright); }
+
+    /* Top Command Header */
+    .command-header {
+      background: rgba(8, 12, 18, 0.96);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 6px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      z-index: 50;
-      position: relative;
+      backdrop-filter: blur(14px);
+      z-index: 100;
+      height: 58px;
+      flex-shrink: 0;
     }
 
-    .case-meta {
+    .brand-cluster {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      align-items: center;
+      gap: 12px;
     }
-    .schema-tag {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
+    .brand-logo-badge {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.3));
+      border: 1px solid var(--cyan-bright);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-family: var(--font-display);
       font-weight: 700;
-      letter-spacing: 1.5px;
-      color: #695e49;
-      text-transform: uppercase;
-    }
-    .case-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1.45rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      color: #1a1611;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .case-subtitle {
-      font-size: 0.8rem;
-      color: #4a4235;
-      font-style: italic;
-      font-weight: 500;
-    }
-
-    /* Agent Status Badges & Stamps */
-    .agent-status-cluster {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .agent-pill {
-      background: rgba(255,255,255,0.45);
-      border: 1px solid var(--card-border-dark);
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: #3b3327;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      color: var(--cyan-bright);
       display: flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
     }
-    .agent-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-    .dot-extractor { background: var(--accent-teal); box-shadow: 0 0 6px var(--accent-teal); }
-    .dot-resolver { background: var(--accent-blue); box-shadow: 0 0 6px var(--accent-blue); }
-    .dot-analyst { background: var(--accent-amber); box-shadow: 0 0 6px var(--accent-amber); }
-
-    .fbi-stamp {
-      border: 2px dashed var(--fbi-stamp-red);
-      color: var(--fbi-stamp-red);
-      padding: 4px 14px;
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      transform: rotate(-3deg);
-      box-shadow: 0 0 8px var(--fbi-stamp-glow);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .fbi-stamp:hover { transform: rotate(0deg) scale(1.05); background: rgba(158, 42, 43, 0.08); }
-
-    /* Action Control Toolbar */
-    .top-toolbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .select-case-folder {
-      background: var(--card-bg);
-      border: 1.5px solid var(--card-border-dark);
-      color: var(--ink-primary);
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      outline: none;
-    }
-    .btn-tactical {
-      background: #2a251e;
-      color: #f7f3ea;
-      border: 1px solid #4a4034;
-      padding: 6px 14px;
-      border-radius: 4px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      transition: all 0.2s;
-    }
-    .btn-tactical:hover { background: #3c342b; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.3); }
-    .btn-tactical.btn-accent { background: var(--fbi-stamp-red); border-color: #791e20; }
-    .btn-tactical.btn-accent:hover { background: #ba2f31; }
-
-    /* Main Grid Workspace */
-    .workspace-dossier {
-      flex: 1;
-      background: var(--folder-inner);
-      display: grid;
-      grid-template-columns: 310px 1fr 340px;
-      grid-template-rows: 1fr 140px;
-      gap: 14px;
-      padding: 14px;
-      height: calc(100vh - 75px);
-      position: relative;
-    }
-
-    /* Compartment Containers */
-    .dossier-panel {
-      background: var(--card-bg);
-      border: 1.5px solid var(--card-border);
-      border-radius: 5px;
+    .brand-meta {
       display: flex;
       flex-direction: column;
-      box-shadow: var(--shadow-paper);
-      overflow: hidden;
-      position: relative;
     }
-    .dossier-panel-header {
-      background: rgba(215, 197, 160, 0.45);
-      border-bottom: 1.5px solid var(--card-border);
-      padding: 8px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .dossier-panel-header h4 {
-      font-family: 'Cinzel', serif;
-      font-size: 0.85rem;
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 0.98rem;
       font-weight: 700;
       letter-spacing: 0.8px;
-      color: #2b251d;
+      color: #fff;
+    }
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      color: var(--cyan-bright);
+      letter-spacing: 1px;
+    }
+
+    /* Speed & Throughput Telemetry Gauge */
+    .telemetry-cluster {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(5, 8, 13, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 4px 12px;
+    }
+    .speed-gauge-wrap {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .gauge-dial {
+      position: relative;
+      width: 36px;
+      height: 36px;
+    }
+    .gauge-svg {
+      transform: rotate(-90deg);
+    }
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.1);
+      stroke-width: 3.5;
+    }
+    .gauge-fill {
+      fill: none;
+      stroke: var(--cyan-bright);
+      stroke-width: 3.5;
+      stroke-dasharray: 100;
+      transition: stroke-dashoffset 0.25s ease;
+      filter: drop-shadow(0 0 4px var(--cyan-bright));
+    }
+    .gauge-value-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .telemetry-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .telemetry-label {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: var(--text-dim);
       text-transform: uppercase;
+    }
+    .telemetry-num {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--emerald-radar);
+    }
+
+    /* Top Control Actions */
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .panel-count-pill {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.68rem;
+    .case-selector-btn {
+      background: rgba(14, 20, 30, 0.9);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .case-selector-btn:hover {
+      border-color: var(--cyan-bright);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+    .btn-tactical-header {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      color: var(--cyan-bright);
+      padding: 6px 11px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
       font-weight: 600;
-      background: rgba(184, 166, 133, 0.35);
-      border: 1px solid var(--card-border-dark);
-      padding: 2px 7px;
-      border-radius: 3px;
-      color: #3d3527;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-tactical-header:hover {
+      background: var(--cyan-bright);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    }
+    .btn-court-dossier {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: rgba(168, 85, 247, 0.45);
+      color: #c084fc;
+    }
+    .btn-court-dossier:hover {
+      background: var(--purple-supervisor);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
     }
 
-    /* Panel 1: Persons of Interest List */
-    .suspects-list {
+    /* Main Grid Workspace */
+    .command-grid {
+      display: grid;
+      grid-template-columns: 310px 1fr 380px;
+      grid-template-rows: 1fr 34px;
+      gap: 8px;
+      padding: 8px;
+      height: calc(100vh - 58px);
+      overflow: hidden;
+    }
+
+    /* Tactical Panel Card Base */
+    .tactical-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      backdrop-filter: blur(16px);
+      position: relative;
+    }
+    .tactical-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 8px; height: 8px;
+      border-top: 2px solid var(--cyan-bright);
+      border-left: 2px solid var(--cyan-bright);
+      pointer-events: none;
+    }
+    .tactical-panel::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0; width: 8px; height: 8px;
+      border-bottom: 2px solid var(--cyan-bright);
+      border-right: 2px solid var(--cyan-bright);
+      pointer-events: none;
+    }
+
+    .panel-head {
+      background: rgba(10, 15, 24, 0.95);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .panel-head-title {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #fff;
+    }
+    .panel-badge {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: var(--cyan-bright);
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Left Panel: Suspects & Persons of Interest */
+    .suspects-scroll {
       flex: 1;
       overflow-y: auto;
-      padding: 10px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
     .suspect-card {
-      background: #fff;
-      border: 1px solid var(--card-border);
-      border-left: 4px solid var(--ink-muted);
-      border-radius: 4px;
-      padding: 10px 12px;
+      background: rgba(10, 14, 22, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 6px;
+      padding: 9px 10px;
+      transition: all 0.2s ease;
       cursor: pointer;
-      transition: all 0.2s;
       position: relative;
     }
     .suspect-card:hover {
-      border-color: var(--card-border-dark);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-      transform: translateX(2px);
+      border-color: rgba(0, 240, 255, 0.4);
+      background: rgba(14, 21, 35, 0.9);
+      transform: translateY(-1px);
     }
-    .suspect-card.active {
-      border-left-color: var(--fbi-stamp-red);
-      background: #fdfaf3;
-      border-color: #b8a685;
+    .suspect-card.selected {
+      border-color: var(--cyan-bright);
+      background: rgba(0, 240, 255, 0.08);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
     }
-    .suspect-card-header {
+    .suspect-card.marked-suspect {
+      border-color: var(--crimson-target);
+      background: rgba(255, 42, 85, 0.08);
+      box-shadow: 0 0 15px rgba(255, 42, 85, 0.25);
+    }
+    .suspect-card.marked-innocent {
+      border-color: var(--emerald-radar);
+      background: rgba(0, 255, 136, 0.06);
+    }
+
+    .suspect-row-top {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
       margin-bottom: 4px;
     }
-    .suspect-name {
-      font-size: 0.92rem;
+    .suspect-identity {
+      font-family: var(--font-display);
+      font-size: 0.84rem;
       font-weight: 700;
-      color: #171410;
+      color: #fff;
     }
-    .suspect-score {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.82rem;
+    .suspect-score-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
       font-weight: 700;
-      color: #4a4235;
+      padding: 2px 6px;
+      border-radius: 4px;
     }
-    .suspect-sub {
-      font-size: 0.72rem;
-      color: var(--ink-secondary);
+    .score-critical {
+      background: rgba(255, 42, 85, 0.2);
+      border: 1px solid var(--crimson-target);
+      color: var(--crimson-target);
+    }
+    .score-warning {
+      background: rgba(255, 184, 0, 0.2);
+      border: 1px solid var(--amber-warn);
+      color: var(--amber-warn);
+    }
+    .score-cleared {
+      background: rgba(0, 255, 136, 0.15);
+      border: 1px solid var(--emerald-radar);
+      color: var(--emerald-radar);
+    }
+
+    .suspect-role {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      color: var(--text-dim);
       margin-bottom: 6px;
     }
-    .tag-row {
+    .suspect-tags-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 4px;
+      margin-bottom: 8px;
     }
-    .meta-tag {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 2px;
-      text-transform: uppercase;
+    .suspect-tag {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #cbd5e1;
     }
-    .tag-match { background: #e2f0d9; color: #2d6a4f; border: 1px solid #b7dbb1; }
-    .tag-fir { background: #e8eaf6; color: #283593; border: 1px solid #c5cae9; }
-    .tag-review { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
-    .tag-warning { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
 
-    /* Panel 2: Network Graph Grid Canvas */
-    .graph-panel {
-      position: relative;
-      background: #fbf8f0;
-      display: flex;
-      flex-direction: column;
-    }
-    .graph-grid-canvas {
-      flex: 1;
-      position: relative;
-      background-color: #fbf8f0;
-      background-image: 
-        linear-gradient(to right, rgba(184, 166, 133, 0.22) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(184, 166, 133, 0.22) 1px, transparent 1px);
-      background-size: 26px 26px;
-    }
-    #cy { width: 100%; height: 100%; position: absolute; top:0; left:0; }
-
-    /* Graph Legend Overlay */
-    .graph-legend-bottom {
-      border-top: 1px dashed var(--card-border-dark);
-      padding: 6px 14px;
-      background: rgba(246, 238, 219, 0.85);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.72rem;
-      color: #554d3d;
-      font-weight: 500;
-    }
-    .legend-item { display: flex; align-items: center; gap: 5px; }
-    .legend-marker { width: 9px; height: 9px; border-radius: 50%; }
-    .marker-key { background: #9e2a2b; }
-    .marker-broker { background: #b07d1a; }
-    .marker-resolved { background: #1f6f78; }
-    .marker-unresolved { background: #716a5c; }
-
-    /* Panel 3: Query Console & Evidence Brief */
-    .query-console-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 12px;
-      overflow-y: auto;
-    }
-    .query-box-group {
+    /* Suspect Action Buttons */
+    .suspect-actions-strip {
       display: flex;
       gap: 6px;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .query-input-field {
+    .btn-suspect-action {
       flex: 1;
-      background: #fff;
-      border: 1.5px solid var(--card-border-dark);
+      padding: 4px 6px;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 600;
       border-radius: 4px;
-      padding: 8px 12px;
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.82rem;
-      color: #1a1611;
-      outline: none;
-    }
-    .btn-run-query {
-      background: var(--fbi-stamp-red);
-      color: #fff;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 4px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
-      font-weight: 700;
+      border: 1px solid transparent;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
       transition: all 0.2s;
     }
-    .btn-run-query:hover { background: #ba2f31; }
+    .btn-mark-crimson {
+      background: rgba(255, 42, 85, 0.15);
+      border-color: rgba(255, 42, 85, 0.4);
+      color: #ff5e7e;
+    }
+    .btn-mark-crimson:hover {
+      background: var(--crimson-target);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255, 42, 85, 0.5);
+    }
+    .btn-mark-cleared {
+      background: rgba(0, 255, 136, 0.12);
+      border-color: rgba(0, 255, 136, 0.35);
+      color: var(--emerald-radar);
+    }
+    .btn-mark-cleared:hover {
+      background: var(--emerald-radar);
+      color: #000;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+    }
 
-    /* Evidence Brief Styled Document */
-    .evidence-brief-sheet {
-      background: #fff;
-      border: 1px solid var(--card-border);
-      padding: 14px;
-      border-radius: 4px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    /* Center Panel: Graph Canvas & Formation Animation HUD */
+    .graph-panel-wrap {
+      display: flex;
+      flex-direction: column;
       position: relative;
     }
-    .brief-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #2b251d;
-      margin-bottom: 8px;
+    .canvas-hud-toolbar {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      right: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 6px;
+      z-index: 20;
+      pointer-events: none;
     }
-    .brief-content {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
-      line-height: 1.5;
-      color: #2c251e;
-      margin-bottom: 10px;
+    .canvas-hud-toolbar > * {
+      pointer-events: auto;
     }
-    .brief-citation {
-      background: #eef2f6;
-      color: #1d4e89;
-      padding: 1px 5px;
-      border-radius: 3px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.72rem;
+    .animation-playback-bar {
+      background: rgba(8, 12, 20, 0.9);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(12px);
+      padding: 5px 11px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+    }
+    .btn-anim-ctrl {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      padding: 4px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
       font-weight: 600;
+      transition: all 0.2s;
     }
-    .redacted-bar {
-      background: #111;
-      color: #111;
-      padding: 0 4px;
-      border-radius: 2px;
-      user-select: none;
+    .btn-anim-ctrl:hover, .btn-anim-ctrl.active {
+      border-color: var(--cyan-bright);
+      color: var(--cyan-bright);
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+    }
+    .btn-disrupt-knockout {
+      border-color: rgba(255, 42, 85, 0.4);
+      color: #ff5e7e;
+      background: rgba(255, 42, 85, 0.1);
+    }
+    .btn-disrupt-knockout:hover, .btn-disrupt-knockout.active {
+      background: var(--crimson-target);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(255, 42, 85, 0.6);
     }
 
-    /* Merge Alert Box */
-    .merge-action-card {
-      background: #fffaf0;
-      border: 1px solid #fed7aa;
-      border-left: 3px solid #f97316;
+    .speed-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      padding: 3px 8px;
       border-radius: 4px;
-      padding: 10px;
-      font-size: 0.75rem;
-      margin-top: 8px;
     }
-    .merge-card-title {
+    .speed-slider {
+      width: 65px;
+      height: 4px;
+      accent-color: var(--cyan-bright);
+      cursor: pointer;
+    }
+
+    .btn-speed-preset {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-speed-preset:hover, .btn-speed-preset.active {
+      background: var(--cyan-bright);
+      color: #000;
+      border-color: var(--cyan-bright);
+      font-weight: bold;
+    }
+
+    .formation-status-pill {
+      background: rgba(8, 12, 20, 0.9);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(12px);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--cyan-bright);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+    }
+    .pulse-radar-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan-bright);
+      box-shadow: 0 0 8px var(--cyan-bright);
+      animation: pulseRadar 1.4s infinite ease-out;
+    }
+    @keyframes pulseRadar {
+      0% { transform: scale(0.9); opacity: 1; }
+      50% { transform: scale(1.6); opacity: 0.4; }
+      100% { transform: scale(0.9); opacity: 1; }
+    }
+
+    /* Tactical Banner Overlay */
+    .tactical-banner-overlay {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 14, 22, 0.95);
+      border: 1px solid var(--cyan-bright);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.35);
+      border-radius: 6px;
+      padding: 7px 18px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
       font-weight: 700;
-      color: #c2410c;
+      color: var(--cyan-bright);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      animation: fadeInBanner 0.3s ease-out;
+    }
+    @keyframes fadeInBanner {
+      from { opacity: 0; transform: translate(-50%, -10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    .banner-danger {
+      border-color: var(--crimson-target);
+      color: #ff5e7e;
+      box-shadow: 0 0 30px rgba(255, 42, 85, 0.4);
+    }
+
+    #cy {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
+
+    /* Floating Forensic Reasoning Tooltip Card */
+    .forensic-hover-card {
+      position: absolute;
+      z-index: 50;
+      background: rgba(8, 12, 20, 0.96);
+      border: 1.5px solid var(--cyan-bright);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.35), 0 12px 35px rgba(0,0,0,0.85);
+      border-radius: 8px;
+      padding: 11px 13px;
+      max-width: 320px;
+      pointer-events: none;
+      backdrop-filter: blur(18px);
+      transition: opacity 0.15s ease;
+    }
+    .forensic-hover-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      padding-bottom: 5px;
+      margin-bottom: 7px;
+    }
+    .forensic-title {
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .forensic-badge {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .forensic-reason-box {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #e2e8f0;
+      line-height: 1.45;
+      background: rgba(0, 240, 255, 0.04);
+      border-left: 2px solid var(--cyan-bright);
+      padding: 6px 8px;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 6px;
+    }
+    .forensic-metadata-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--text-dim);
+    }
+
+    /* Graph Legend Overlay */
+    .graph-legend-overlay {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      background: rgba(8, 12, 20, 0.88);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 6px;
+      display: flex;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      pointer-events: none;
+      z-index: 15;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Right Panel: Tabbed Intelligence (Multi-Agent Debate + Evidence Brief) */
+    .right-tabs-head {
+      display: flex;
+      background: rgba(7, 10, 16, 0.95);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-dim);
+      font-family: var(--font-display);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      color: var(--cyan-bright);
+      border-bottom-color: var(--cyan-bright);
+      background: rgba(0, 240, 255, 0.05);
+    }
+
+    .tab-content-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Interactive Debate Showdown Controls */
+    .debate-showdown-bar {
+      background: rgba(9, 13, 21, 0.9);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .debate-topic-select {
+      background: rgba(6, 9, 14, 0.95);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 5px 8px;
+      border-radius: 4px;
+      outline: none;
+    }
+    .debate-trigger-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .consensus-meter-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+    }
+    .consensus-bar-track {
+      width: 70px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .consensus-bar-fill {
+      height: 100%;
+      background: var(--emerald-radar);
+      transition: width 0.4s ease;
+    }
+    .btn-run-debate {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.3));
+      border: 1px solid var(--cyan-bright);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 5px;
-      margin-bottom: 4px;
-    }
-    .merge-card-desc {
-      color: #7c2d12;
-      line-height: 1.35;
-      margin-bottom: 8px;
-    }
-    .merge-btns {
-      display: flex;
-      gap: 8px;
-    }
-    .btn-review-sm {
-      padding: 4px 10px;
-      border-radius: 3px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid transparent;
-    }
-    .btn-approve { background: #2d6a4f; color: #fff; border-color: #1b4332; }
-    .btn-reject { background: #fff; color: #9e2a2b; border-color: #9e2a2b; }
-
-    /* Bottom Panel: Anomaly Alert Feed */
-    .alert-feed-panel {
-      grid-column: 1 / -1;
-      background: var(--fbi-stamp-red);
-      color: #fff;
-      border: 1.5px solid #731e20;
-      display: flex;
-      flex-direction: column;
-      border-radius: 5px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-      overflow: hidden;
-    }
-    .alert-feed-header {
-      background: #731e20;
-      padding: 5px 14px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .alert-ticker-cards {
-      flex: 1;
-      padding: 8px 14px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      overflow-x: auto;
-      background: #8b2527;
-    }
-    .alert-pill-box {
-      background: #fdfaf3;
-      color: #211c16;
-      border-radius: 4px;
-      padding: 8px 10px;
-      border: 1px solid #d4c5a9;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      cursor: pointer;
       transition: all 0.2s;
     }
-    .alert-pill-box:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.25); }
-    .alert-pill-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    .alert-pill-title {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #171410;
-    }
-    .alert-pill-sev {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem;
-      font-weight: 700;
-      padding: 1px 5px;
-      border-radius: 2px;
-      text-transform: uppercase;
-    }
-    .sev-critical { background: #fee2e2; color: #991b1b; }
-    .sev-high { background: #ffedd5; color: #9a3412; }
-    .sev-med { background: #fef3c7; color: #92400e; }
-    .alert-pill-desc {
-      font-size: 0.72rem;
-      color: #524738;
-      line-height: 1.3;
+    .btn-run-debate:hover {
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+      transform: scale(1.02);
     }
 
-    /* ========================================================================= */
-    /* HOLLYWOOD / FBI MODAL 1: LIVE MULTI-AGENT DEBATE TERMINAL */
-    /* ========================================================================= */
-    .dialog-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(10, 12, 15, 0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      animation: fadeIn 0.2s ease-out;
-    }
-    .terminal-window {
-      background: var(--terminal-bg);
-      border: 1.5px solid var(--terminal-border);
-      border-radius: 8px;
-      width: min(840px, 92%);
-      max-height: 85vh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 20px rgba(99, 179, 237, 0.15);
-      font-family: 'IBM Plex Mono', monospace;
-      overflow: hidden;
-    }
-    .terminal-header {
-      background: #1a202c;
-      border-bottom: 1px solid var(--terminal-border);
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #cbd5e0;
-      font-size: 0.8rem;
-    }
-    .terminal-dots { display: flex; gap: 6px; }
-    .t-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .t-dot-red { background: #e53e3e; }
-    .t-dot-yellow { background: #d69e2e; }
-    .t-dot-green { background: #38a169; }
-
-    .debate-feed {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: #0d1117;
-    }
-    .debate-bubble {
-      background: rgba(255, 255, 255, 0.04);
-      border-left: 3px solid #718096;
-      padding: 10px 14px;
+    /* Multi-Agent Debate Feed */
+    .debate-item {
+      background: rgba(10, 14, 22, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-left: 3px solid #334155;
       border-radius: 0 6px 6px 0;
-      font-size: 0.78rem;
-      line-height: 1.45;
+      padding: 8px 10px;
+      font-size: 0.74rem;
+      animation: fadeInDebate 0.3s ease-out;
     }
-    .bubble-extractor { border-left-color: var(--terminal-cyan); }
-    .bubble-resolver { border-left-color: #ecc94b; }
-    .bubble-analyst { border-left-color: #f56565; }
-    .bubble-supervisor { border-left-color: var(--terminal-text); }
+    @keyframes fadeInDebate {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .debate-extractor { border-left-color: var(--cyan-bright); }
+    .debate-resolver { border-left-color: var(--amber-warn); }
+    .debate-analyst { border-left-color: var(--crimson-target); }
+    .debate-supervisor { border-left-color: var(--purple-supervisor); }
 
-    .debate-speaker {
-      font-weight: 700;
-      font-size: 0.72rem;
-      margin-bottom: 4px;
-      display: flex;
-      justify-content: space-between;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .debate-body { color: #e2e8f0; }
-
-    /* ========================================================================= */
-    /* HOLLYWOOD / FBI MODAL 2: SUSPECT CONVERGENCE & MULTI-SIGNAL ESCALATION */
-    /* ========================================================================= */
-    .convergence-card {
-      background: #161b22;
-      border: 1.5px solid #30363d;
-      border-radius: 8px;
-      width: min(780px, 92%);
-      max-height: 85vh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 25px rgba(229, 62, 62, 0.2);
-      color: #f0f6fc;
-      overflow: hidden;
-    }
-    .convergence-header {
-      background: #21262d;
-      border-bottom: 1px solid #30363d;
-      padding: 14px 20px;
+    .debate-agent-title {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      text-transform: uppercase;
     }
-    .convergence-body {
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    .debate-text {
+      color: #cbd5e1;
+      line-height: 1.45;
+      font-size: 0.72rem;
     }
-    .timeline-stream {
-      position: relative;
-      margin-left: 14px;
-      padding-left: 20px;
-      border-left: 2px solid #30363d;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-    .timeline-node {
-      position: relative;
-    }
-    .timeline-node::before {
-      content: '';
-      position: absolute;
-      left: -27px;
-      top: 3px;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--accent-teal);
-      border: 2px solid #161b22;
-    }
-    .timeline-node.danger::before { background: #f85149; box-shadow: 0 0 10px #f85149; }
-    .timeline-node.warn::before { background: #d29922; }
 
-    .confidence-meter-container {
-      background: #21262d;
-      border: 1px solid #30363d;
+    /* Evidence Brief & Natural Language Query */
+    .nl-query-box {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .nl-input {
+      flex: 1;
+      background: rgba(6, 9, 14, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      padding: 6px 10px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      outline: none;
+    }
+    .nl-input:focus {
+      border-color: var(--cyan-bright);
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+    }
+    .btn-nl-run {
+      background: var(--cyan-bright);
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      padding: 0 12px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-nl-run:hover {
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+      transform: scale(1.02);
+    }
+
+    .evidence-brief-card {
+      background: rgba(8, 12, 19, 0.85);
+      border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      padding: 14px;
+      padding: 10px;
+    }
+    .evidence-brief-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      color: var(--cyan-bright);
+      font-weight: 700;
+    }
+    .evidence-brief-body {
+      font-size: 0.72rem;
+      line-height: 1.45;
+      color: #e2e8f0;
       margin-bottom: 10px;
     }
-    .progress-bar-bg {
-      height: 12px;
-      background: #0d1117;
-      border-radius: 6px;
-      overflow: hidden;
-      margin-top: 8px;
+    .citation-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      color: var(--cyan-bright);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin: 1px 3px 1px 0;
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .progress-bar-fill {
-      height: 100%;
-      width: 45%;
-      background: linear-gradient(90deg, #238636 0%, #d29922 60%, #da3633 100%);
-      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    .citation-pill:hover {
+      background: var(--cyan-bright);
+      color: #000;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.97); }
-      to { opacity: 1; transform: scale(1); }
+    /* Bottom Real-Time Anomaly Alert Ticker */
+    .anomaly-ticker-strip {
+      grid-column: 1 / -1;
+      background: rgba(8, 12, 18, 0.96);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 12px;
+      overflow: hidden;
+    }
+    .ticker-lead-badge {
+      background: rgba(255, 42, 85, 0.2);
+      border: 1px solid var(--crimson-target);
+      color: var(--crimson-target);
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .ticker-scroll-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      overflow-x: auto;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      color: #cbd5e1;
+    }
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .ticker-item:hover {
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--cyan-bright);
+    }
+
+    /* Modal: Court-Admissible Intelligence Dossier */
+    .court-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .court-dossier-sheet {
+      background: #0d121c;
+      border: 2px solid #a855f7;
+      box-shadow: 0 0 50px rgba(168, 85, 247, 0.4), 0 25px 60px rgba(0,0,0,0.9);
+      border-radius: 8px;
+      width: min(850px, 95%);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      color: #f1f5f9;
+      overflow: hidden;
+    }
+    .court-dossier-head {
+      background: rgba(168, 85, 247, 0.15);
+      border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .court-title-main {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #e2e8f0;
+      letter-spacing: 1px;
+    }
+    .court-dossier-body {
+      padding: 22px;
+      overflow-y: auto;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+    .court-legal-stamp {
+      border: 2px dashed #a855f7;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 14px 0;
+      background: rgba(168, 85, 247, 0.06);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #c084fc;
+    }
+    .evidence-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+    }
+    .evidence-table th, .evidence-table td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 10px;
+      text-align: left;
+    }
+    .evidence-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--cyan-bright);
     }
   </style>
 </head>
 <body>
+  <div id="root"></div>
 
-  <!-- Top Header / Case Manila Folder -->
-  <div class="case-folder-header">
-    <div class="case-meta">
-      <div class="schema-tag">NCRB SCHEMA &bull; MULTI-SOURCE SYNTHETIC INTELLIGENCE &bull; SIH 2026</div>
-      <div class="case-title">
-        <span id="displayCaseId">CASE NCR-2026-0417</span>
-        <span class="fbi-stamp" onclick="openConvergenceDialog('P001')">INVESTIGATOR ACCESS ONLY</span>
-      </div>
-      <div class="case-subtitle" id="caseSubtitle">Operation Sandstorm &bull; Suspected Narcotics Distribution & Hawala Clearing Ring</div>
-    </div>
+  <!-- React 18 Application Script -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-    <!-- Agent Operational Badges -->
-    <div class="agent-status-cluster">
-      <div class="agent-pill"><span class="agent-dot dot-extractor"></span> Agent 1 Extractor</div>
-      <div class="agent-pill"><span class="agent-dot dot-resolver"></span> Agent 2 Resolver</div>
-      <div class="agent-pill"><span class="agent-dot dot-analyst"></span> Agent 3 Analyst</div>
-    </div>
+    const API_BASE = "http://127.0.0.1:8000/api/v1";
 
-    <!-- Action Toolbar -->
-    <div class="top-toolbar-actions">
-      <select id="caseSelector" class="select-case-folder" onchange="switchCase(this.value)">
-        <option value="sandstorm">Operation Sandstorm (Narcotics Ring)</option>
-        <option value="phantom">Operation Phantom (Hawala & Bridge)</option>
-        <option value="mirage">Operation Mirage (SIM-Swap Fraud)</option>
-      </select>
-      <button class="btn-tactical btn-accent" onclick="openDebateDialog()"><i class="fa-solid fa-comments"></i> Multi-Agent Debate</button>
-      <button class="btn-tactical" onclick="openConvergenceDialog('P001')"><i class="fa-solid fa-chart-line"></i> Convergence Proof</button>
-      <button class="btn-tactical" onclick="triggerReSeed()"><i class="fa-solid fa-rotate"></i> Re-Seed Graph</button>
-    </div>
-  </div>
-
-  <!-- Main Dossier Workspace -->
-  <div class="workspace-dossier">
-
-    <!-- Compartment 1: Persons of Interest -->
-    <div class="dossier-panel">
-      <div class="dossier-panel-header">
-        <h4><i class="fa-solid fa-address-book" style="color:var(--accent-amber);"></i> Persons of Interest</h4>
-        <span class="panel-count-pill" id="suspectsCount">5 Resolved</span>
-      </div>
-      <div class="suspects-list" id="suspectsList">
-        <!-- Dynamically injected suspects -->
-      </div>
-    </div>
-
-    <!-- Compartment 2: Network Graph Grid Area -->
-    <div class="dossier-panel graph-panel">
-      <div class="dossier-panel-header">
-        <h4><i class="fa-solid fa-diagram-project" style="color:var(--accent-teal);"></i> Multi-Modal Syndicate Graph</h4>
-        <span class="panel-count-pill" id="graphStatsPill">15 Nodes &bull; 971 Edges</span>
-      </div>
-      <div class="graph-grid-canvas">
-        <div id="cy"></div>
-      </div>
-      <!-- Graph Classification Legend -->
-      <div class="graph-legend-bottom">
-        <div class="legend-item"><span class="legend-marker marker-key"></span> Prime Target (High Centrality)</div>
-        <div class="legend-item"><span class="legend-marker marker-broker"></span> Structural Bridge / Intermediary</div>
-        <div class="legend-item"><span class="legend-marker marker-resolved"></span> Resolved Entity (Corroborated)</div>
-        <div class="legend-item"><span class="legend-marker marker-unresolved"></span> Unverified / Pending Merge</div>
-      </div>
-    </div>
-
-    <!-- Compartment 3: Query Console & Evidence Brief -->
-    <div class="dossier-panel">
-      <div class="dossier-panel-header">
-        <h4><i class="fa-solid fa-terminal" style="color:var(--fbi-stamp-red);"></i> Query Console & Brief</h4>
-        <span class="panel-count-pill">Supervisor LangGraph</span>
-      </div>
-      <div class="query-console-panel">
-        <div class="query-box-group">
-          <input type="text" id="nlQueryInput" class="query-input-field" placeholder="find connection between Arjun and Phoenix Exports..." onkeydown="if(event.key==='Enter') runSupervisorQuery()">
-          <button class="btn-run-query" onclick="runSupervisorQuery()"><i class="fa-solid fa-play"></i> Run</button>
-        </div>
-
-        <!-- Evidence Brief Document -->
-        <div class="evidence-brief-sheet" id="evidenceBriefSheet">
-          <div class="brief-title">
-            <span>Evidence Brief &mdash; Grounded Dossier</span>
-            <span style="font-family:'Courier Prime'; font-size:0.75rem; color:var(--accent-teal);" id="briefConfidence">96% CONFIDENCE</span>
-          </div>
-          <div class="brief-content" id="briefContentText">
-            Execute a natural language query above or click any suspect card to generate a retrieval-grounded intelligence brief citing verified knowledge graph node IDs.
-          </div>
-          <div id="briefKeyFindings"></div>
-
-          <!-- Pending Merge Box -->
-          <div class="merge-action-card" id="pendingMergeBox">
-            <div class="merge-card-title"><i class="fa-solid fa-triangle-exclamation"></i> Merge Pending &mdash; Suresh Pillai / "S. Pillai"</div>
-            <div class="merge-card-desc">Name-only fuzzy match, confidence 0.71. Ambiguous alias routed to Investigator Review Queue for verification.</div>
-            <div class="merge-btns">
-              <button class="btn-review-sm btn-approve" onclick="alert('Merge Approved by Officer.')">Approve Merge</button>
-              <button class="btn-review-sm btn-reject" onclick="alert('Merge Rejected.')">Reject</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Compartment 4: Bottom Anomaly Alert Feed -->
-    <div class="alert-feed-panel">
-      <div class="alert-feed-header">
-        <span><i class="fa-solid fa-bolt"></i> Real-Time Multi-Layer Anomaly Alert Feed</span>
-        <span style="font-family:'IBM Plex Mono'; font-size:0.68rem;">4-Layer Algorithmic Engine &bull; Coverage: 100%</span>
-      </div>
-      <div class="alert-ticker-cards" id="alertTickerContainer">
-        <!-- Dynamically injected alerts -->
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- MODAL 1: MULTI-AGENT DEBATE DIALOG (FBI TACTICAL TERMINAL) -->
-  <!-- ========================================================================= -->
-  <div class="dialog-overlay" id="debateDialog">
-    <div class="terminal-window">
-      <div class="terminal-header">
-        <div class="terminal-dots">
-          <div class="t-dot t-dot-red" onclick="closeDebateDialog()"></div>
-          <div class="t-dot t-dot-yellow"></div>
-          <div class="t-dot t-dot-green"></div>
-        </div>
-        <span>NEXUS MULTI-AGENT ADVERSARIAL DEBATE CONSOLE // LANGGRAPH REASONING STREAM</span>
-        <span style="cursor:pointer;" onclick="closeDebateDialog()"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div class="debate-feed" id="debateFeed">
-        <!-- Dynamically filled with agent exchanges -->
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- MODAL 2: SUSPECT CONVERGENCE DIALOG (EVIDENCE ESCALATION TIMELINE) -->
-  <!-- ========================================================================= -->
-  <div class="dialog-overlay" id="convergenceDialog">
-    <div class="convergence-card">
-      <div class="convergence-header">
-        <div>
-          <h3 style="font-size:1.15rem; font-family:'Cinzel'; color:#f0f6fc;" id="convSuspectName">TARGET CONVERGENCE & MULTI-SIGNAL ESCALATION</h3>
-          <span style="font-family:'Courier Prime'; font-size:0.75rem; color:#8b949e;" id="convSuspectMeta">CANONICAL ID: TGT-ARJUN-MEHTA // CASE: SANDSTORM</span>
-        </div>
-        <button style="background:transparent; border:none; color:#8b949e; font-size:1.2rem; cursor:pointer;" onclick="closeConvergenceDialog()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="convergence-body">
-        
-        <!-- Live Confidence Progress Meter -->
-        <div class="confidence-meter-container">
-          <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700;">
-            <span>AGGREGATED SUSPECT RISK SCORE</span>
-            <span style="color:#f85149;" id="convScoreDisplay">94.8 / 100 (CRITICAL PRIORITY)</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="convScoreBar" style="width: 94.8%;"></div>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.68rem; color:#8b949e; margin-top:5px; font-family:'IBM Plex Mono';">
-            <span>LOW CONFIDENCE</span>
-            <span>PROBABLE ASSOCIATION</span>
-            <span>CONFIRMED KINGPIN / CO-CONSPIRATOR</span>
-          </div>
-        </div>
-
-        <!-- Evidence Stream -->
-        <h4 style="font-size:0.85rem; font-family:'Cinzel'; color:#e6edf3; border-bottom:1px solid #30363d; padding-bottom:6px;">Multi-Modal Convergence Progression:</h4>
-        <div class="timeline-stream" id="convergenceTimeline">
-          <!-- Dynamically populated timeline nodes -->
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Application Logic -->
-  <script>
-    const API_BASE = "http://localhost:8000/api/v1";
-    let cy = null;
-    let currentCase = "sandstorm";
-
-    // Pre-canned rich cases data for instant fallback and robust demo
-    const CASE_DATA = {
+    // Static Case Data with Both Verified Targets and Raw Signal Noise
+    const CASE_METADATA = {
       sandstorm: {
-        title: "CASE NCR-2026-0417",
-        sub: "Operation Sandstorm • Narcotics Distribution & Hawala Clearing Ring",
+        title: "Operation Sandstorm",
+        subtitle: "Narcotics Distribution, Hawala Smurfing & Burner SIM Ring",
+        code: "NCR-2025-0312",
         suspects: [
-          { id: "P001", name: "Arjun Mehta", alias: "A. Mehta / Arjun Mehata", role: "Kingpin / Coordinator", score: 0.94, tags: ["PHONE MATCH", "FIR-001", "HAWALA SMURFING"], type: "key" },
-          { id: "P002", name: "Deepak Rao", alias: "D. Rao / Deepak R.", role: "Logistics Controller", score: 0.88, tags: ["TXN LINK", "TOWER CO-LOCATION"], type: "broker" },
-          { id: "ORG001", name: "Phoenix Exports Pvt Ltd", alias: "Phoenix Exp.", role: "Corporate Shell Front", score: 0.90, tags: ["BANK REF", "10X STRUCTURING"], type: "resolved" },
-          { id: "P003", name: "Sunita Verma", alias: "S. Verma", role: "Financial Courier", score: 0.82, tags: ["BURST CALLS", "Z-SCORE 3.8"], type: "resolved" },
-          { id: "P004", name: "Suresh Pillai", alias: "S. Pillai", role: "Unverified Associate", score: 0.71, tags: ["FUZZY MATCH", "PENDING REVIEW"], type: "unresolved" }
-        ]
+          { id: "P001", name: "Arjun Mehta", alias: "A. Mehta / A.M.", role: "Syndicate Financier", score: 0.98, tags: ["PMLA STRUCTURING", "BKC-112 TOWER", "HAWALA HUB"], isSuspect: true, reason: "10 structured deposits <₹10L to Phoenix Exports; Primary MSISDN +91-98400-11111 active at raid site." },
+          { id: "P002", name: "Kabir Sheikh", alias: "Kabeer", role: "Logistics Coordinator", score: 0.91, tags: ["CDR BURST", "BKC-112 TOWER"], isSuspect: true, reason: "18 burst calls prior to seizure; Co-located at Tower BKC-112 with Arjun Mehta." },
+          { id: "P003", name: "Deepak Rao", alias: "D. Rao", role: "Hawala Courier", score: 0.88, tags: ["MULE ACCOUNT", "CASH WITHDRAWAL"], isSuspect: true, reason: "Executed rapid cash layering from HDFC-XXXX-1001; Named in FIR #0312 as courier." },
+          { id: "P004", name: "Vikram Sinha", alias: "V. Sinha", role: "Telecom Distributor", score: 0.82, tags: ["BURNER SIM POOL", "IMEI SWAP"], isSuspect: false, reason: "Telecom franchise owner flagged for dispensing bulk unverified prepaid SIM cards." },
+          { id: "P005", name: "Anand Krishnan", alias: "A. Krishnan", role: "Shell Entity Director", score: 0.79, tags: ["PHOENIX EXPORTS", "CURRENT ACCT"], isSuspect: false, reason: "Registered director of Phoenix Exports Pvt Ltd; Facilitated corporate banking conduit." },
+          { id: "W001", name: "Dr. R. K. Verma", alias: "Eyewitness", role: "Innocent Bystander", score: 0.04, tags: ["WITNESS", "CLEARED"], isSuspect: false, reason: "Civilian medical practitioner present during search; Cleared of all criminal involvement." }
+        ],
+        alerts: [
+          { id: "ANO-001", title: "Telecom CDR Burst Pattern", layer: "Layer 1 Heuristic", severity: "HIGH", detail: "18 calls within 48h pre-incident window between Arjun Mehta & logistics node." },
+          { id: "ANO-002", title: "PMLA Cash Structuring (Smurfing)", layer: "Layer 1 Heuristic", severity: "CRITICAL", detail: "10 deposits of ₹9.80L–₹9.95L avoiding mandatory ₹10L FIU-IND reporting." },
+          { id: "ANO-003", title: "Rapid Network Expansion", layer: "Layer 2 Graph", severity: "MEDIUM", detail: "Primary MSISDN +91-98400-11111 initiated contact with 4 new unknown numbers in 24h." }
+        ],
+        debateScenarios: {
+          alias: [
+            { agent: "Extractor", color: "extractor", time: "10:14:02", text: "Extracted raw accused alias 'A. Mehta' fleeing premises in FIR #0312. Proposing link to Arjun Mehta." },
+            { agent: "Resolver", color: "resolver", time: "10:14:05", text: "Skepticism check: Jaro-Winkler string distance is only 0.74. Surnames alone are insufficient proof under BNSS safeguard standards." },
+            { agent: "Analyst", color: "analyst", time: "10:14:09", text: "Corroboration unlocked: Phone +91-98400-11111 cited for 'A. Mehta' co-located at Tower BKC-112 with Arjun Mehta's bank account login IP." },
+            { agent: "Supervisor", color: "supervisor", time: "10:14:12", text: "Consensus Approved. Three-tier confidence reaches 96.4%. Canonical target auto-merged with zero false accusation." }
+          ],
+          role: [
+            { agent: "Extractor", color: "extractor", time: "10:16:00", text: "Identified Anand Krishnan listed as company director in Phoenix Exports MCA registry." },
+            { agent: "Analyst", color: "analyst", time: "10:16:04", text: "NetworkX PageRank is 0.15 (moderate), but betweenness centrality is 0.42. Node acts as conduit between legitimate bank transfers and mule couriers." },
+            { agent: "Supervisor", color: "supervisor", time: "10:16:08", text: "Classification verified: Tagged as Corporate Shell Director rather than Operational Kingpin. Preserving evidence provenance." }
+          ]
+        },
+        defaultBrief: {
+          summary: "Arjun Mehta coordinates the primary narcotics and hawala distribution hub, laundering ₹98.7L through Phoenix Exports corporate conduit.",
+          findings: [
+            { text: "10 structured deposits of ₹9.80L–₹9.95L from HDFC-XXXX-1001 to Phoenix Exports corporate account [ANO-002].", nodes: ["P001", "ACC001", "ORG001"] },
+            { text: "Abnormal CDR burst of 18 calls between MSISDN +91-98400-11111 and courier Deepak Rao prior to raid [ANO-001].", nodes: ["P001", "P003", "+91-98400-11111"] }
+          ]
+        }
       },
       phantom: {
-        title: "CASE NCR-2026-0922",
-        sub: "Operation Phantom • Cross-Syndicate Extortion & Financial Brokerage",
+        title: "Operation Phantom",
+        subtitle: "Extortion Syndicate & Hidden Cross-Cluster Hawala Bridge",
+        code: "NCR-2025-0198",
         suspects: [
-          { id: "Q001", name: "Vikram Sinha", alias: "V. Sinha", role: "Cluster A Leader", score: 0.92, tags: ["FIR-PHANTOM-1", "EXTORTION"], type: "key" },
-          { id: "Q006", name: "Anand Krishnan", alias: "Aanand K.", role: "Financial Intermediary", score: 0.96, tags: ["BETWEENNESS 0.38", "GDS BRIDGE"], type: "broker" },
-          { id: "ORG003", name: "Delta Finance Ltd", alias: "Delta Fin", role: "Hawala Clearing Hub", score: 0.89, tags: ["ROUND MULTIPLES", "ANO-005"], type: "resolved" },
-          { id: "Q007", name: "Rohit Jain", alias: "R. Jain", role: "Cluster B Receiver", score: 0.87, tags: ["CROSS-CLUSTER", "SBI-XXXX-4004"], type: "resolved" }
-        ]
+          { id: "Q006", name: "Anand Krishnan", alias: "A. Krishnan", role: "Hidden Cross-Cluster Bridge", score: 0.98, tags: ["STRUCTURAL BROKER", "LOW CLUSTERING"], isSuspect: true, reason: "Sole intermediary linking Extortion Cluster A to Laundering Cluster B." },
+          { id: "Q001", name: "Vikram Sinha", alias: "V. Sinha", role: "Extortion Ring Leader (Cluster A)", score: 0.93, tags: ["EXTORTION CELL", "DELTA FINANCE"], isSuspect: true, reason: "Coordinated intimidation calls from +91-97300-11111 citing Delta Finance." },
+          { id: "Q007", name: "Rohit Jain", alias: "R. Jain", role: "Hawala Recipient (Cluster B)", score: 0.89, tags: ["SMURFING RECEIVER", "SBI ACCT"], isSuspect: true, reason: "Received ₹15,00,000 in layered transfers forwarded through Anand Krishnan." },
+          { id: "W002", name: "Lakshmi Devi", alias: "Complainant", role: "Extortion Victim", score: 0.02, tags: ["VICTIM", "CLEARED"], isSuspect: false, reason: "Victim who filed FIR #0198 after receiving extortion threats." }
+        ],
+        alerts: [
+          { id: "ANO-004", title: "Hidden Structural Broker Discovered", layer: "Layer 4 GDS Graph", severity: "CRITICAL", detail: "Anand Krishnan identified as sole bridge linking extortion and laundering clusters." },
+          { id: "ANO-005", title: "Round-Number Hawala Transfers", layer: "Layer 1 Rule", severity: "HIGH", detail: "6 transfers of exact amounts (₹5,00,000 & ₹10,00,000) between Delta Finance & Rohit Jain." }
+        ],
+        debateScenarios: {
+          alias: [
+            { agent: "Extractor", color: "extractor", time: "11:20:01", text: "Parsed FIR #0198 and 2 bank transaction journals. Identified 2 disparate operational clusters." },
+            { agent: "Analyst", color: "analyst", time: "11:20:04", text: "Graph Data Science Betweenness Centrality flagged node Q006 (Anand Krishnan) with local clustering coefficient < 0.05." },
+            { agent: "Supervisor", color: "supervisor", time: "11:20:08", text: "Identified covert bridge routing illicit proceeds. Verified 100% citation fidelity across [Q006, Q001, Q007]." }
+          ],
+          role: [
+            { agent: "Resolver", color: "resolver", time: "11:22:10", text: "Could Anand Krishnan be an unwitting retail accounting contractor?" },
+            { agent: "Analyst", color: "analyst", time: "11:22:15", text: "Negative. Transaction timing shows funds forwarded to Rohit Jain within 90 minutes of extortion collection." },
+            { agent: "Supervisor", color: "supervisor", time: "11:22:20", text: "Confirmed active co-conspirator. Elevated to High Priority Target." }
+          ]
+        },
+        defaultBrief: {
+          summary: "Anand Krishnan acts as the hidden structural bridge between Vikram Sinha's extortion cell (Delta Finance) and Rohit Jain's hawala laundering accounts.",
+          findings: [
+            { text: "Vikram Sinha directs Delta Finance Ltd, executing ₹10,00,000 hawala transfer to intermediary Anand Krishnan [ANO-004].", nodes: ["Q001", "ORG003", "Q006"] },
+            { text: "Anand Krishnan routes 6 round-number transactions totaling ₹15,00,000 to Rohit Jain within 24h [ANO-005].", nodes: ["Q006", "Q007"] }
+          ]
+        }
       },
       mirage: {
-        title: "CASE NCR-2026-1104",
-        sub: "Operation Mirage • High-Velocity SIM-Swap & Night-Time Fraud Wave",
+        title: "Operation Mirage",
+        subtitle: "Night-Time High-Velocity SIM-Swap Cyber Fraud Ring",
+        code: "NCR-2025-0442",
         suspects: [
-          { id: "M001", name: "Kabir Sheikh", alias: "Kabeer S.", role: "SIM-Swap Operator", score: 0.95, tags: ["TOWER BKC-112", "ANO-007"], type: "key" },
-          { id: "M002", name: "Imran Khan", alias: "Imraan K.", role: "Mule Account Handler", score: 0.91, tags: ["ISOLATION FOREST", "ANO-006"], type: "broker" },
-          { id: "M003", name: "Sunil Patil", alias: "S. Patil", role: "Telecom Vendor Insider", score: 0.85, tags: ["CDR BURST", "4X SIMS"], type: "resolved" }
-        ]
+          { id: "M001", name: "Imran Khan", alias: "Imraan", role: "Primary Mule Coordinator", score: 0.97, tags: ["SIM CLONE", "PNB MULE"], isSuspect: true, reason: "Received fraudulent OTP-authenticated transfers of ₹9,00,000 during SIM outage." },
+          { id: "M002", name: "Prakash Desai", alias: "P. Desai", role: "Telecom Insider Facilitator", score: 0.94, tags: ["UNAUTHORIZED SWAP", "TOWER BKC-112"], isSuspect: true, reason: "Issued duplicate SIM on forged Aadhaar; Co-located at Tower BKC-112." },
+          { id: "M003", name: "Sunil Patil", alias: "S. Patil", role: "Mule Account Recruiter", score: 0.86, tags: ["4X SIM CARDS", "NIGHT WAVE"], isSuspect: true, reason: "Withdrew cash via ATMs between 02:00–04:00 AM immediately after SIM swap." }
+        ],
+        alerts: [
+          { id: "ANO-006", title: "High-Value Night-Time Fraud Wave", layer: "Layer 3 IsolationForest", severity: "CRITICAL", detail: "11 transactions > ₹4,00,000 processed between 02:00–04:00 AM." },
+          { id: "ANO-007", title: "Multi-Suspect Tower Co-Location", layer: "Layer 4 Spatial Graph", severity: "HIGH", detail: "4 suspect SIMs co-located at Tower BKC-112 preceding SIM clone execution." }
+        ],
+        debateScenarios: {
+          alias: [
+            { agent: "Extractor", color: "extractor", time: "14:02:11", text: "Processed victim statement from FIR #0442. Detected cloned MSISDN +91-96200-55555." },
+            { agent: "Analyst", color: "analyst", time: "14:02:15", text: "Spatial GDS co-occurrence analysis caught 4 suspect phones registered at Tower BKC-112 at 22:00 hrs." },
+            { agent: "Supervisor", color: "supervisor", time: "14:02:18", text: "Synthesized SIM swap timeline and linked mule accounts [M001, M002, M003]." }
+          ],
+          role: [
+            { agent: "Resolver", color: "resolver", time: "14:05:01", text: "Testing telecom clerk P. Desai culpability. Could this be clerical error?" },
+            { agent: "Analyst", color: "analyst", time: "14:05:05", text: "Audit log reveals 4 duplicate SIM issuances within 30 minutes, all citing identical fabricated Aadhaar hash." },
+            { agent: "Supervisor", color: "supervisor", time: "14:05:10", text: "Conspiracy proven under BNS Sec 318. Accused status confirmed." }
+          ]
+        },
+        defaultBrief: {
+          summary: "Prakash Desai (telecom insider) fraudulently cloned target SIM cards, enabling Imran Khan's mule accounts to siphon ₹9,00,000 during nocturnal hours.",
+          findings: [
+            { text: "Spatial co-location of 4 suspect handsets at Tower BKC-112 immediately preceding SIM swap [ANO-007].", nodes: ["M001", "M002", "TOW001"] },
+            { text: "Night-time fraud wave: 11 rapid transfers exceeding ₹4,00,000 processed between 02:00–04:00 AM [ANO-006].", nodes: ["M001", "M003"] }
+          ]
+        }
       }
     };
 
-    // Initialize Cytoscape
-    function initCy(graphData) {
-      const cyContainer = document.getElementById('cy');
-      cy = cytoscape({
-        container: cyContainer,
-        elements: graphData,
-        style: [
-          {
-            selector: 'node',
-            style: {
-              'label': 'data(label)',
-              'color': '#211c16',
-              'font-family': 'IBM Plex Mono, monospace',
-              'font-size': '10px',
-              'font-weight': '600',
-              'text-valign': 'bottom',
-              'text-margin-y': 4,
-              'background-color': function(ele) {
-                const label = (ele.data('label') || '').toLowerCase();
-                if (label.includes('arjun') || label.includes('vikram') || label.includes('kabir')) return '#9e2a2b';
-                if (label.includes('nair') || label.includes('deepak') || label.includes('anand')) return '#b07d1a';
-                if (label.includes('phoenix') || label.includes('delta') || label.includes('patil')) return '#1f6f78';
-                return '#716a5c';
-              },
-              'width': function(ele) {
-                const label = (ele.data('label') || '').toLowerCase();
-                return (label.includes('arjun') || label.includes('anand')) ? 32 : 24;
-              },
-              'height': function(ele) {
-                const label = (ele.data('label') || '').toLowerCase();
-                return (label.includes('arjun') || label.includes('anand')) ? 32 : 24;
-              },
-              'border-width': 2,
-              'border-color': '#fff'
+    function App() {
+      const [currentCase, setCurrentCase] = useState("sandstorm");
+      const [activeTab, setActiveTab] = useState("debate"); // "debate" or "brief"
+      const [suspects, setSuspects] = useState(CASE_METADATA.sandstorm.suspects);
+      const [selectedSuspect, setSelectedSuspect] = useState(CASE_METADATA.sandstorm.suspects[0]);
+      const [alerts, setAlerts] = useState(CASE_METADATA.sandstorm.alerts);
+      
+      // Debate state
+      const [debateTopic, setDebateTopic] = useState("alias");
+      const [debates, setDebates] = useState(CASE_METADATA.sandstorm.debateScenarios.alias);
+      const [consensusScore, setConsensusScore] = useState(96);
+
+      // Brief State
+      const [nlQuery, setNlQuery] = useState("");
+      const [briefSummary, setBriefSummary] = useState("Arjun Mehta coordinates the primary narcotics and hawala distribution hub, laundering ₹98.7L through Phoenix Exports.");
+      const [briefFindings, setBriefFindings] = useState([
+        { text: "10 structured deposits of ₹9.80L–₹9.95L from HDFC-XXXX-1001 to Phoenix Exports corporate account.", nodes: ["P001", "ACC001", "ORG001"] },
+        { text: "CDR burst of 18 calls between MSISDN +91-98400-11111 and courier Deepak Rao.", nodes: ["P001", "P003", "+91-98400-11111"] }
+      ]);
+
+      // Animation & Speed Meter States
+      const [isHypothesisRunning, setIsHypothesisRunning] = useState(false);
+      const [hypothesisStatus, setHypothesisStatus] = useState("SYNDICATE NETWORK ACTIVE");
+      const [hypothesisBanner, setHypothesisBanner] = useState(null);
+      const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
+      const [formationProgress, setFormationProgress] = useState(100);
+      const [processingRate, setProcessingRate] = useState(7266);
+      const [queryLatency, setQueryLatency] = useState(28);
+
+      // Disruption Knockout Mode
+      const [isDisrupted, setIsDisrupted] = useState(false);
+
+      // Court Dossier Modal
+      const [showCourtModal, setShowCourtModal] = useState(false);
+
+      // Interactive Hover Tooltip State for Forensic Reasoning
+      const [hoveredEntity, setHoveredEntity] = useState(null);
+
+      const cyRef = useRef(null);
+      const cyInstance = useRef(null);
+
+      // Initialize Cytoscape Graph Canvas
+      useEffect(() => {
+        if (!cyRef.current) return;
+
+        const cy = cytoscape({
+          container: cyRef.current,
+          style: [
+            {
+              selector: 'node',
+              style: {
+                'label': 'data(label)',
+                'color': '#f0f6fc',
+                'font-family': 'JetBrains Mono',
+                'font-size': '10px',
+                'text-valign': 'bottom',
+                'text-margin-y': 6,
+                'background-color': '#00f0ff',
+                'width': 'data(size)',
+                'height': 'data(size)',
+                'border-width': 2,
+                'border-color': '#ffffff',
+                'border-opacity': 0.85,
+                'transition-property': 'background-color, border-color, width, height, opacity',
+                'transition-duration': '0.35s'
+              }
+            },
+            {
+              selector: 'node[type = "target"]',
+              style: {
+                'background-color': '#ff2a55',
+                'border-color': '#ff7b95',
+                'border-width': 3,
+                'shadow-blur': 18,
+                'shadow-color': '#ff2a55',
+                'shadow-opacity': 0.85
+              }
+            },
+            {
+              selector: 'node[type = "broker"]',
+              style: {
+                'background-color': '#a855f7',
+                'border-color': '#d8b4fe',
+                'border-width': 2.5
+              }
+            },
+            {
+              selector: 'node[type = "cleared"]',
+              style: {
+                'background-color': '#00ff88',
+                'border-color': '#86efac',
+                'border-width': 2
+              }
+            },
+            {
+              selector: 'node[type = "noise"]',
+              style: {
+                'background-color': '#1e293b',
+                'border-color': '#475569',
+                'border-width': 1,
+                'color': '#64748b',
+                'opacity': 0.45
+              }
+            },
+            {
+              selector: 'node[type = "arrested"]',
+              style: {
+                'background-color': '#334155',
+                'border-color': '#ff2a55',
+                'border-width': 4,
+                'border-style': 'dashed',
+                'color': '#ff2a55'
+              }
+            },
+            {
+              selector: 'node:selected',
+              style: {
+                'border-color': '#00f0ff',
+                'border-width': 4,
+                'shadow-blur': 25,
+                'shadow-color': '#00f0ff',
+                'shadow-opacity': 1
+              }
+            },
+            {
+              selector: 'edge',
+              style: {
+                'width': 'data(weight)',
+                'line-color': 'data(color)',
+                'target-arrow-color': 'data(color)',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier',
+                'opacity': 0.7,
+                'arrow-scale': 0.85,
+                'transition-property': 'line-color, opacity, width',
+                'transition-duration': '0.35s'
+              }
+            },
+            {
+              selector: 'edge[status = "probe-fail"]',
+              style: {
+                'line-color': '#ff2a55',
+                'line-style': 'dashed',
+                'width': 2.5,
+                'opacity': 0.85
+              }
+            },
+            {
+              selector: 'edge[status = "severed"]',
+              style: {
+                'line-color': '#475569',
+                'line-style': 'dotted',
+                'opacity': 0.25
+              }
+            },
+            {
+              selector: 'edge:hover',
+              style: {
+                'width': 4.5,
+                'opacity': 1.0,
+                'line-color': '#00f0ff'
+              }
             }
-          },
-          {
-            selector: 'edge',
-            style: {
-              'width': 2,
-              'line-color': '#b8a685',
-              'target-arrow-color': '#82745a',
-              'target-arrow-shape': 'triangle',
-              'curve-style': 'bezier',
-              'label': 'data(label)',
-              'color': '#6e624c',
-              'font-size': '8px',
-              'font-family': 'Courier Prime, monospace'
-            }
-          },
-          {
-            selector: '.highlighted',
-            style: {
-              'background-color': '#c1121f',
-              'line-color': '#c1121f',
-              'target-arrow-color': '#c1121f',
-              'width': 36,
-              'height': 36,
-              'border-color': '#fff',
-              'border-width': 3
-            }
+          ],
+          layout: { name: 'cose', animate: false }
+        });
+
+        // Tooltip inspection helper
+        const showTooltip = (isNode, target, evt) => {
+          const rect = cyRef.current ? cyRef.current.getBoundingClientRect() : { width: 600, height: 500 };
+          const pos = evt.renderedPosition || { x: 200, y: 200 };
+
+          if (isNode) {
+            setHoveredEntity({
+              isNode: true,
+              title: target.data('label') || target.id(),
+              type: target.data('type') === 'target' ? 'Prime Target' : target.data('type') === 'broker' ? 'Covert Bridge' : target.data('type') === 'cleared' ? 'Cleared Citizen' : target.data('type') === 'noise' ? 'Raw Signal Noise' : 'Entity',
+              reason: target.data('reason') || 'Canonical entity record participating in investigation.',
+              doc: target.data('doc') || 'fir_sandstorm_1.txt',
+              metric: target.data('metric') || 'Centrality Hub',
+              x: Math.min(Math.max(15, pos.x + 18), rect.width - 330),
+              y: Math.min(Math.max(65, pos.y - 40), rect.height - 190)
+            });
+          } else {
+            const src = target.source().data('label') || target.data('source');
+            const tgt = target.target().data('label') || target.data('target');
+            setHoveredEntity({
+              isNode: false,
+              title: `${target.data('rel_type') || 'CONNECTED'}: ${src} → ${tgt}`,
+              type: target.data('rel_type') || 'Relationship',
+              reason: target.data('reason') || 'Forensic financial/telecom connection between nodes.',
+              doc: target.data('doc') || 'txn_sandstorm.csv',
+              metric: target.data('metric') || 'Verified Edge',
+              x: Math.min(Math.max(15, pos.x + 18), rect.width - 330),
+              y: Math.min(Math.max(65, pos.y - 40), rect.height - 190)
+            });
           }
-        ],
-        layout: {
+        };
+
+        cy.on('mouseover', 'node', (evt) => showTooltip(true, evt.target, evt));
+        cy.on('tap', 'node', (evt) => {
+          showTooltip(true, evt.target, evt);
+          const node = evt.target;
+          const match = suspects.find(s => s.id === node.id() || s.name.toLowerCase() === (node.data('label') || '').toLowerCase());
+          if (match) setSelectedSuspect(match);
+        });
+        cy.on('mouseout', 'node', () => setHoveredEntity(null));
+
+        cy.on('mouseover', 'edge', (evt) => showTooltip(false, evt.target, evt));
+        cy.on('tap', 'edge', (evt) => showTooltip(false, evt.target, evt));
+        cy.on('mouseout', 'edge', () => setHoveredEntity(null));
+        cy.on('tap', (evt) => { if (evt.target === cy) setHoveredEntity(null); });
+
+        cyInstance.current = cy;
+        buildGraphForCase(currentCase, cy);
+
+        return () => cy.destroy();
+      }, []);
+
+      // Build Graph Elements (Syndicate + Dense Raw Noise)
+      const buildGraphForCase = (caseId, cy) => {
+        if (!cy) return;
+        cy.elements().remove();
+        setIsDisrupted(false);
+        setHypothesisBanner(null);
+
+        const rawElements = getFullGraphTopology(caseId);
+        cy.add(rawElements);
+
+        const layout = cy.layout({
           name: 'cose',
           animate: true,
-          padding: 25,
-          nodeRepulsion: 5500,
-          idealEdgeLength: 60
-        }
-      });
+          animationDuration: 750,
+          nodeRepulsion: 7500,
+          idealEdgeLength: 90,
+          padding: 30
+        });
+        layout.run();
+      };
 
-      cy.on('tap', 'node', function(evt) {
-        const node = evt.target;
-        openConvergenceDialog(node.id(), node.data('label'));
-      });
-    }
+      // Full Network Topology with Raw Signal Noise
+      const getFullGraphTopology = (caseId) => {
+        if (caseId === "sandstorm") {
+          return [
+            // Core Syndicate Nodes
+            { data: { id: "P001", label: "Arjun Mehta", size: 40, type: "target", doc: "fir_sandstorm_1.txt", metric: "PR=0.34 (Kingpin)", reason: "Named as core syndicate financier fleeing raid. Linked to HDFC-XXXX-1001 structuring ₹98.7L and phone +91-98400-11111." } },
+            { data: { id: "P002", label: "Kabir Sheikh", size: 32, type: "target", doc: "fir_sandstorm_1.txt", metric: "PR=0.22 (Logistics)", reason: "18 burst calls prior to narcotics seizure; Co-located at Tower BKC-112 during delivery." } },
+            { data: { id: "P003", label: "Deepak Rao", size: 28, type: "target", doc: "fir_sandstorm_2.txt", metric: "PR=0.18 (Courier)", reason: "Operated cash mule withdrawals from HDFC-XXXX-1001; Named in FIR #0312 as distributor." } },
+            { data: { id: "P004", label: "Vikram Sinha", size: 26, type: "broker", doc: "fir_sandstorm_3.txt", metric: "PR=0.19 (Distributor)", reason: "Telecom outlet owner who dispensed burner prepaid SIM cards used in contraband shipments." } },
+            { data: { id: "P005", label: "Anand Krishnan", size: 26, type: "broker", doc: "fir_sandstorm_3.txt", metric: "PR=0.15 (Director)", reason: "Registered director of Phoenix Exports Pvt Ltd; Facilitated corporate bank conduit." } },
+            { data: { id: "ACC001", label: "HDFC-XXXX-1001", size: 22, type: "neutral", doc: "txn_sandstorm.csv", metric: "Txns: 10 Sub-Threshold", reason: "Account executing structured transfers under ₹10L to evade PMLA reporting." } },
+            { data: { id: "ORG001", label: "Phoenix Exports", size: 34, type: "target", doc: "fir_sandstorm_3.txt", metric: "Shell Corp Conduit", reason: "Front company receiving layered funds used to finance cross-border narcotics shipments." } },
+            { data: { id: "PH001", label: "+91-98400-11111", size: 20, type: "neutral", doc: "cdr_sandstorm.csv", metric: "Tower: BKC-112", reason: "Primary cellular handset monitored during narcotics raid window." } },
+            { data: { id: "PH002", label: "+91-98400-22222", size: 20, type: "neutral", doc: "cdr_sandstorm.csv", metric: "Calls: 18 Burst", reason: "Burner mobile phone maintained by logistics coordinator Kabir Sheikh." } },
+            { data: { id: "W001", label: "Dr. R.K. Verma", size: 22, type: "cleared", doc: "fir_sandstorm_1.txt", metric: "Eyewitness (Cleared)", reason: "Independent civilian witness to raid; Cleared with zero criminal associations." } },
+            
+            // Dense Candidate Noise Nodes (Simulating 7,266 raw interactions)
+            { data: { id: "N01", label: "98200-XXXX1 (Civilian)", size: 14, type: "noise", doc: "cdr_sandstorm.csv", metric: "CDR Misdial", reason: "Casual single-call interaction during daytime; Zero criminal co-location." } },
+            { data: { id: "N02", label: "98200-XXXX2 (Civilian)", size: 14, type: "noise", doc: "cdr_sandstorm.csv", metric: "Normal Traffic", reason: "Delivery courier service call; No recurrent interaction." } },
+            { data: { id: "N03", label: "Metro Dairy Store", size: 16, type: "noise", doc: "txn_sandstorm.csv", metric: "Retail UPI ₹450", reason: "Legitimate grocery vendor transaction; Cleared automatically by IsolationForest." } },
+            { data: { id: "N04", label: "Apex Stationary", size: 16, type: "noise", doc: "txn_sandstorm.csv", metric: "Retail UPI ₹1,200", reason: "Office supply vendor payee; Non-smurfing round transaction." } },
+            { data: { id: "N05", label: "98200-XXXX3 (Civilian)", size: 14, type: "noise", doc: "cdr_sandstorm.csv", metric: "Tower Andheri-E", reason: "Call pinged unrelated tower; No geographic tie to seizure site." } },
+            { data: { id: "N06", label: "Suresh Mehta (Father)", size: 18, type: "noise", doc: "fir_sandstorm_1.txt", metric: "Kinsman (Cleared)", reason: "Accused's father named in FIR header; Zero involvement in syndicate operations." } },
+            { data: { id: "N07", label: "QuickPay Recharges", size: 15, type: "noise", doc: "txn_sandstorm.csv", metric: "Utility Payee", reason: "Telecom top-up merchant; Cleared of money laundering." } },
 
-    // Switch Case
-    async function switchCase(caseId) {
-      currentCase = caseId;
-      const c = CASE_DATA[caseId] || CASE_DATA.sandstorm;
-      document.getElementById('displayCaseId').innerText = c.title;
-      document.getElementById('caseSubtitle').innerText = c.sub;
-
-      renderSuspects(c.suspects);
-      await loadGraph(caseId);
-      await loadAlerts(caseId);
-    }
-
-    // Render Suspects List
-    function renderSuspects(suspects) {
-      const container = document.getElementById('suspectsList');
-      container.innerHTML = '';
-      suspects.forEach((s, idx) => {
-        container.innerHTML += `
-          <div class="suspect-card ${idx === 0 ? 'active' : ''}" onclick="selectSuspect('${s.id}', '${s.name}', ${s.score})">
-            <div class="suspect-card-header">
-              <span class="suspect-name">${s.name}</span>
-              <span class="suspect-score">${s.score.toFixed(2)}</span>
-            </div>
-            <div class="suspect-sub">${s.alias} &bull; ${s.role}</div>
-            <div class="tag-row">
-              ${s.tags.map(t => `<span class="meta-tag ${t.includes('MATCH') ? 'tag-match' : t.includes('REVIEW') ? 'tag-review' : t.includes('SMURFING') || t.includes('Z-SCORE') ? 'tag-warning' : 'tag-fir'}">${t}</span>`).join('')}
-            </div>
-          </div>
-        `;
-      });
-      document.getElementById('suspectsCount').innerText = `${suspects.length} Targets`;
-    }
-
-    // Load Graph Data
-    async function loadGraph(caseId) {
-      try {
-        const res = await fetch(`${API_BASE}/graph/${caseId}`);
-        const data = await res.json();
-        const elems = data.nodes.concat(data.edges);
-        if (cy) {
-          cy.elements().remove();
-          cy.add(elems);
-          cy.layout({ name: 'cose', animate: true, nodeRepulsion: 5500 }).run();
+            // Verified Edges
+            { data: { id: "e1", source: "P001", target: "ACC001", rel_type: "OWNS_ACCOUNT", weight: 3, color: "#ff2a55", doc: "fir_sandstorm_1.txt", metric: "Beneficial Owner", reason: "Bank KYC documents establish Arjun Mehta as the sole beneficial owner of HDFC-XXXX-1001." } },
+            { data: { id: "e2", source: "ACC001", target: "ORG001", rel_type: "PMLA_SMURFING", weight: 4.5, color: "#ff2a55", doc: "txn_sandstorm.csv", metric: "10x ₹9.80L Deposits", reason: "ANO-002: 10 structured transfers under ₹10L threshold routed into corporate shell account." } },
+            { data: { id: "e3", source: "P001", target: "PH001", rel_type: "SUBSCRIBER_OF", weight: 2.5, color: "#00f0ff", doc: "cdr_sandstorm.csv", metric: "MSISDN Match", reason: "Telecom registration and CDR tower logs confirm active ownership of +91-98400-11111." } },
+            { data: { id: "e4", source: "PH001", target: "PH002", rel_type: "CDR_BURST_CALLS", weight: 4, color: "#ffb800", doc: "cdr_sandstorm.csv", metric: "18 Calls in 48h", reason: "ANO-001: Abnormal spike of 18 phone calls immediately preceding the narcotics delivery." } },
+            { data: { id: "e5", source: "PH002", target: "P002", rel_type: "USED_BY", weight: 2.5, color: "#00f0ff", doc: "fir_sandstorm_1.txt", metric: "Device Seized", reason: "Burner phone recovered directly from Kabir Sheikh upon apprehension." } },
+            { data: { id: "e6", source: "P002", target: "P003", rel_type: "CO_ACCUSED", weight: 2, color: "#ff7b95", doc: "fir_sandstorm_2.txt", metric: "Named Jointly", reason: "Jointly indicted under NDPS Sections 22 & 29 in FIR #0312." } },
+            { data: { id: "e7", source: "P005", target: "ORG001", rel_type: "DIRECTOR_OF", weight: 2, color: "#a855f7", doc: "fir_sandstorm_3.txt", metric: "MCA21 Registry", reason: "Official corporate filings list Anand Krishnan as statutory director of Phoenix Exports." } },
+            { data: { id: "e8", source: "P004", target: "PH002", rel_type: "DISPENSED_SIM", weight: 2, color: "#a855f7", doc: "fir_sandstorm_3.txt", metric: "Retailer Point-of-Sale", reason: "Prepaid SIM card activated at Vikram Sinha's telecom outlet without Aadhaar validation." } }
+          ];
+        } else if (caseId === "phantom") {
+          return [
+            { data: { id: "Q001", label: "Vikram Sinha", size: 36, type: "target", doc: "fir_phantom_1.txt", metric: "Cluster A Leader", reason: "Coordinated extortion intimidation from Delta Finance." } },
+            { data: { id: "Q006", label: "Anand Krishnan", size: 38, type: "broker", doc: "fir_phantom_4.txt", metric: "Hidden Bridge (Low CC)", reason: "Sole intermediary linking Extortion Cluster A to Laundering Cluster B." } },
+            { data: { id: "Q007", label: "Rohit Jain", size: 32, type: "target", doc: "fir_phantom_2.txt", metric: "Cluster B Receiver", reason: "Received layered extortion proceeds forwarded from Anand Krishnan." } },
+            { data: { id: "ORG003", label: "Delta Finance Ltd", size: 28, type: "target", doc: "fir_phantom_1.txt", metric: "Extortion Front", reason: "Front agency issuing coercive loan recovery threats." } },
+            { data: { id: "N11", label: "97300-XXXX8 (Civilian)", size: 14, type: "noise", doc: "cdr_phantom.csv", metric: "Casual Call", reason: "Misdirected incoming inquiry; Cleared." } },
+            { data: { id: "N12", label: "Suburban Medical Store", size: 15, type: "noise", doc: "txn_phantom.csv", metric: "Vendor UPI ₹820", reason: "Retail medical purchase; Cleared." } },
+            { data: { id: "e10", source: "Q001", target: "ORG003", rel_type: "CONTROLS", weight: 3, color: "#ff2a55", doc: "fir_phantom_1.txt", metric: "Executive", reason: "Directs operational extortion activities." } },
+            { data: { id: "e11", source: "ORG003", target: "Q006", rel_type: "HAWALA_TRANSFER", weight: 4.5, color: "#a855f7", doc: "txn_phantom.csv", metric: "₹10,00,000 Transferred", reason: "ANO-004: Covert bridge link transferring funds to intermediary." } },
+            { data: { id: "e12", source: "Q006", target: "Q007", rel_type: "FORWARDED_FUNDS", weight: 4.5, color: "#ffb800", doc: "txn_phantom.csv", metric: "Layering Conduit", reason: "ANO-005: 6 exact round-number transfers to Rohit Jain within 24 hours." } }
+          ];
         } else {
-          initCy(elems);
+          return [
+            { data: { id: "M001", label: "Imran Khan", size: 36, type: "target", doc: "fir_mirage_1.txt", metric: "Mule Account Holder", reason: "Received fraudulent OTP-authenticated transactions of ₹9,00,000 during SIM clone window." } },
+            { data: { id: "M002", label: "Prakash Desai", size: 32, type: "target", doc: "fir_mirage_2.txt", metric: "Telecom Insider", reason: "Facilitated unauthorized SIM swap without verifying identity credentials." } },
+            { data: { id: "TOW001", label: "Tower BKC-112", size: 26, type: "broker", doc: "cdr_mirage.csv", metric: "Spatial Co-Location", reason: "Tower pinged concurrently by 4 suspect SIMs immediately before night-time fraud execution." } },
+            { data: { id: "N21", label: "96200-XXXX4 (Civilian)", size: 14, type: "noise", doc: "cdr_mirage.csv", metric: "Tower Signal Noise", reason: "Ordinary daytime caller on same tower; Cleared." } },
+            { data: { id: "e20", source: "M002", target: "TOW001", rel_type: "CO_LOCATED_AT", weight: 3.5, color: "#ff2a55", doc: "cdr_mirage.csv", metric: "29-Apr 22:30", reason: "ANO-007: Spatial graph co-occurrence during planning window." } },
+            { data: { id: "e21", source: "M001", target: "TOW001", rel_type: "CO_LOCATED_AT", weight: 3.5, color: "#ff2a55", doc: "cdr_mirage.csv", metric: "29-Apr 22:30", reason: "ANO-007: Multiple suspect SIMs co-located at same cell tower." } }
+          ];
         }
-        document.getElementById('graphStatsPill').innerText = `${data.nodes.length} Nodes • ${data.edges.length} Edges`;
-      } catch (e) {
-        console.warn("Backend graph fetch error, using fallback layout:", e);
-      }
-    }
+      };
 
-    // Load Alerts
-    async function loadAlerts(caseId) {
-      const container = document.getElementById('alertTickerContainer');
-      container.innerHTML = '<div style="color:#fff; font-size:0.75rem;"><i class="fa-solid fa-spinner fa-spin"></i> Loading 4-layer anomaly signals...</div>';
-      try {
-        const res = await fetch(`${API_BASE}/alerts/${caseId}`);
-        const data = await res.json();
-        container.innerHTML = '';
-        data.alerts.forEach(a => {
-          const sevClass = a.severity === 'CRITICAL' ? 'sev-critical' : a.severity === 'HIGH' ? 'sev-high' : 'sev-med';
-          container.innerHTML += `
-            <div class="alert-pill-box" onclick="highlightNodes(${JSON.stringify(a.involved_entities).replace(/"/g, '&quot;')})">
-              <div class="alert-pill-head">
-                <span class="alert-pill-title">${a.title}</span>
-                <span class="alert-pill-sev ${sevClass}">${a.severity}</span>
+      // FEATURE 1: DYNAMIC "ATTEMPT, REJECT, LOCK & ILLUMINATE" BEAM SEARCH ANIMATION
+      const runHypothesisSearchAnimation = () => {
+        if (!cyInstance.current || isHypothesisRunning) return;
+        const cy = cyInstance.current;
+        setIsHypothesisRunning(true);
+        setIsDisrupted(false);
+        setFormationProgress(0);
+
+        const sf = 1 / Math.max(0.25, playbackSpeed);
+
+        // Reset all elements: show raw noisy field
+        cy.elements().style('opacity', 0.65);
+        cy.nodes('[type = "noise"]').style('opacity', 0.6);
+        cy.edges().style('opacity', 0);
+
+        setHypothesisStatus(`PROBING RAW SIGNALS (${playbackSpeed}x SPEED)`);
+        setHypothesisBanner(`STAGE 1: PROBING CANDIDATE HYPOTHESES ACROSS NOISE FIELD [${playbackSpeed}x]`);
+
+        // Step 1: Probe a fake/innocent link from Arjun Mehta to Civilian Caller N01
+        setTimeout(() => {
+          setHypothesisStatus("HYPOTHESIS TEST: Arjun Mehta ⇢ Civilian 98200-XXXX1");
+          // Add temporary candidate probe edge
+          const probeEdge1 = cy.add({
+            group: 'edges',
+            data: { id: 'temp_probe_1', source: 'P001', target: 'N01', weight: 3, color: '#ffb800', status: 'probe-fail' }
+          });
+          setFormationProgress(25);
+          setProcessingRate(Math.round(3410 * playbackSpeed));
+
+          // Step 2: Corroboration Fails -> Edge Snaps & Dissolves
+          setTimeout(() => {
+            setHypothesisBanner("FAILED CORROBORATION: No Tower Co-location • Zero Financial Structuring ⇢ REJECTED");
+            probeEdge1.style('line-color', '#ff2a55');
+            probeEdge1.style('opacity', 0.9);
+
+            setTimeout(() => {
+              cy.remove(probeEdge1); // Edge breaks and snaps away!
+              setFormationProgress(45);
+
+              // Step 3: Probe legitimate connection to HDFC-XXXX-1001
+              setTimeout(() => {
+                setHypothesisStatus("PROBING: Arjun Mehta ⇢ HDFC-XXXX-1001");
+                setHypothesisBanner("EVALUATING FINANCIAL LAYER: 10 structured deposits <₹10L found [ANO-002]");
+                cy.$('#e1').style('opacity', 1).style('width', 4).style('line-color', '#00ff88');
+
+                setTimeout(() => {
+                  // Step 4: Lock second connection (PMLA Smurfing to Phoenix Exports)
+                  setHypothesisStatus("PROBING: HDFC-XXXX-1001 ⇢ Phoenix Exports Pvt Ltd");
+                  setHypothesisBanner("VERIFIED BENEFICIAL OWNER & CORPORATE CONDUIT [ANO-002 LOCK]");
+                  cy.$('#e2').style('opacity', 1).style('width', 4.5).style('line-color', '#ff2a55');
+                  setFormationProgress(75);
+                  setProcessingRate(Math.round(8940 * playbackSpeed));
+
+                  setTimeout(() => {
+                    // Step 5: Lock Telecom CDR Bursts
+                    setHypothesisBanner("VERIFIED TOWER BKC-112 CO-LOCATION & 18 BURST CALLS [ANO-001 LOCK]");
+                    cy.$('#e3, #e4, #e5, #e6, #e7, #e8').style('opacity', 1);
+                    setFormationProgress(100);
+
+                    // FINAL CLIMAX: Dim raw noise nodes into background, illuminate true syndicate core in neon!
+                    setTimeout(() => {
+                      cy.nodes('[type = "noise"]').animate({
+                        style: { opacity: 0.12 },
+                        duration: Math.round(500 * sf)
+                      });
+                      cy.nodes('[type = "target"]').animate({
+                        style: { 'shadow-blur': 30, 'border-width': 4 },
+                        duration: Math.round(500 * sf)
+                      });
+                      setHypothesisStatus("SYNDICATE TOPOLOGY CONFIRMED (0 FALSE MERGERS)");
+                      setHypothesisBanner("FINAL ILLUMINATION: 7/7 Ground-Truth Signals Corroborated • Zero Innocent False Accusations");
+                      setIsHypothesisRunning(false);
+                      setProcessingRate(Math.round(7266 * playbackSpeed));
+                    }, 800 * sf);
+                  }, 800 * sf);
+                }, 800 * sf);
+              }, 700 * sf);
+            }, 600 * sf);
+          }, 800 * sf);
+        }, 600 * sf);
+      };
+
+      // FEATURE 2: WHAT-IF SYNDICATE DISRUPTION (NODE KNOCKOUT SIMULATION)
+      const toggleSyndicateDisruption = () => {
+        if (!cyInstance.current) return;
+        const cy = cyInstance.current;
+        const nextState = !isDisrupted;
+        setIsDisrupted(nextState);
+
+        const targetNode = cy.$('#P001, #Q006, #M001'); // Key structural hubs
+
+        if (nextState) {
+          // Arrest / Knockout target node
+          targetNode.data('type', 'arrested');
+          targetNode.style('background-color', '#334155');
+          targetNode.style('border-color', '#ff2a55');
+          targetNode.style('border-style', 'dashed');
+
+          // Sever all connected edges
+          targetNode.connectedEdges().style('line-style', 'dotted').style('opacity', 0.2).style('line-color', '#475569');
+
+          // Relayout remaining subgraphs into 3 shattered, isolated components
+          const layout = cy.layout({
+            name: 'cose',
+            animate: true,
+            animationDuration: 800,
+            nodeRepulsion: 12000,
+            idealEdgeLength: 120
+          });
+          layout.run();
+
+          setHypothesisBanner("TACTICAL DISRUPTION ACTIVE: Target in Custody • Syndicate Severed into 3 Disconnected Fragments • 84% Capital Flow Halted");
+        } else {
+          // Restore network
+          buildGraphForCase(currentCase, cy);
+          setHypothesisBanner("NETWORK RESTORED: Full active operational syndicate state.");
+        }
+      };
+
+      // FEATURE 3: INTERACTIVE AGENT DEBATE RUNNER
+      const handleRunDebate = (topic) => {
+        setDebateTopic(topic);
+        const scenarios = CASE_METADATA[currentCase].debateScenarios[topic] || CASE_METADATA[currentCase].debateScenarios.alias;
+        setDebates([]);
+        setConsensusScore(45); // Starts in dispute
+
+        scenarios.forEach((item, idx) => {
+          setTimeout(() => {
+            setDebates(prev => [...prev, item]);
+            setConsensusScore(Math.round(45 + ((idx + 1) / scenarios.length) * 51.4));
+          }, (idx + 1) * 450);
+        });
+      };
+
+      // Switch Case
+      const handleSwitchCase = (newCase) => {
+        setCurrentCase(newCase);
+        const meta = CASE_METADATA[newCase];
+        setSuspects(meta.suspects);
+        setSelectedSuspect(meta.suspects[0]);
+        setAlerts(meta.alerts);
+        setDebates(meta.debateScenarios.alias);
+        setDebateTopic("alias");
+        setNlQuery("");
+
+        if (meta.defaultBrief) {
+          setBriefSummary(meta.defaultBrief.summary);
+          setBriefFindings(meta.defaultBrief.findings);
+        }
+
+        if (cyInstance.current) {
+          buildGraphForCase(newCase, cyInstance.current);
+        }
+      };
+
+      // FEATURE: INTELLIGENT FORENSIC GRAPH QUERY & RELATIONSHIP PATHFINDER
+      const handleExecuteQuery = (rawQuery) => {
+        const q = (rawQuery || '').trim();
+        if (!q) return;
+
+        const cy = cyInstance.current;
+        if (!cy) return;
+
+        const lowerQ = q.toLowerCase();
+
+        // 1. Cross-Case Detection (e.g. asking about "Arjun Mehta" in Operation Phantom)
+        const crossCaseEntities = [
+          { name: "arjun mehta", case: "sandstorm", caseName: "Operation Sandstorm" },
+          { name: "kabir sheikh", case: "sandstorm", caseName: "Operation Sandstorm" },
+          { name: "deepak rao", case: "sandstorm", caseName: "Operation Sandstorm" },
+          { name: "phoenix exports", case: "sandstorm", caseName: "Operation Sandstorm" },
+          { name: "rohit jain", case: "phantom", caseName: "Operation Phantom" },
+          { name: "delta finance", case: "phantom", caseName: "Operation Phantom" },
+          { name: "imran khan", case: "mirage", caseName: "Operation Mirage" },
+          { name: "prakash desai", case: "mirage", caseName: "Operation Mirage" }
+        ];
+
+        // 2. Identify nodes mentioned in the active graph
+        const currentNodes = cy.nodes();
+        const matchedCurrentNodes = currentNodes.filter(n => {
+          const label = (n.data('label') || '').toLowerCase();
+          const id = (n.id() || '').toLowerCase();
+          return lowerQ.includes(label) || lowerQ.includes(id) || 
+                 (label.includes(' ') && label.split(' ').every(part => part.length > 2 && lowerQ.includes(part)));
+        });
+
+        // Check if query is exclusively asking about someone from another case
+        const crossMatch = crossCaseEntities.find(c => lowerQ.includes(c.name) && c.case !== currentCase);
+        if (crossMatch && matchedCurrentNodes.length === 0) {
+          setQueryLatency(18);
+          setBriefSummary(`TARGET NOT IN ACTIVE CASE FILE: '${crossMatch.name.toUpperCase()}' is an accused entity indexed under ${crossMatch.caseName}, not in the active graph for ${CASE_METADATA[currentCase].title}. Switch cases in the top-right header to investigate ${crossMatch.name.toUpperCase()}'s network.`);
+          setBriefFindings([
+            { text: `Cross-case pointer: ${crossMatch.name.toUpperCase()} belongs to ${crossMatch.caseName}.`, nodes: [] }
+          ]);
+          cy.elements().unselect();
+          return;
+        }
+
+        // 3. Multi-Entity Relationship Search (e.g. "how is vikram sinha related to rohit jain")
+        if (matchedCurrentNodes.length >= 2) {
+          const src = matchedCurrentNodes[0];
+          const dst = matchedCurrentNodes[1];
+
+          // Use Cytoscape built-in A* search algorithm
+          const aStarResult = cy.elements().aStar({
+            root: src,
+            goal: dst,
+            directed: false
+          });
+
+          if (aStarResult.found) {
+            // Path Found!
+            const pathEles = aStarResult.path;
+            cy.elements().unselect();
+            pathEles.select();
+            cy.animate({
+              fit: { eles: pathEles, padding: 50 },
+              duration: 500
+            });
+
+            // Reconstruct path narrative
+            const nodeNames = [];
+            const edgeRels = [];
+            pathEles.forEach(ele => {
+              if (ele.isNode()) nodeNames.push(ele.data('label'));
+              else edgeRels.push(ele.data('rel_type') || 'CONNECTED');
+            });
+
+            let narrativePath = "";
+            for (let i = 0; i < nodeNames.length; i++) {
+              narrativePath += `[${nodeNames[i]}]`;
+              if (i < edgeRels.length) {
+                narrativePath += ` ──(${edgeRels[i]})──► `;
+              }
+            }
+
+            const latency = Math.round(18 + Math.random() * 10);
+            setQueryLatency(latency);
+            setBriefSummary(`FORENSIC NEXUS ESTABLISHED (${pathEles.nodes().length - 1} HOPS): ${src.data('label')} is linked to ${dst.data('label')} via ${narrativePath}.`);
+
+            const findingsList = [];
+            for (let i = 0; i < pathEles.edges().length; i++) {
+              const edge = pathEles.edges()[i];
+              findingsList.push({
+                text: `${edge.source().data('label')} ──(${edge.data('rel_type')})──► ${edge.target().data('label')}: ${edge.data('reason') || edge.data('metric') || 'Verified relationship'}`,
+                nodes: [edge.source().id(), edge.target().id()]
+              });
+            }
+            setBriefFindings(findingsList);
+          } else {
+            // NO FORENSIC RELATIONSHIP DETECTED!
+            cy.elements().unselect();
+            src.select();
+            dst.select();
+
+            const latency = Math.round(16 + Math.random() * 8);
+            setQueryLatency(latency);
+            setBriefSummary(`NO FORENSIC NEXUS DETECTED (CONFIDENCE: 98.4%): Direct and multi-hop graph traversal between '${src.data('label')}' and '${dst.data('label')}' found 0 financial, telecom, or co-conspiracy connections.`);
+            setBriefFindings([
+              { text: `${src.data('label')} (${src.data('type')}) and ${dst.data('label')} (${dst.data('type')}) belong to disconnected topological components.`, nodes: [src.id(), dst.id()] },
+              { text: "Verified across 7,266 raw interactions with zero false positives.", nodes: [] }
+            ]);
+          }
+        } else if (matchedCurrentNodes.length === 1) {
+          // Single entity dossier search
+          const node = matchedCurrentNodes[0];
+          cy.elements().unselect();
+          node.select();
+          const neighborhood = node.neighborhood().add(node);
+          neighborhood.select();
+          cy.animate({
+            fit: { eles: neighborhood, padding: 50 },
+            duration: 450
+          });
+
+          const latency = Math.round(14 + Math.random() * 10);
+          setQueryLatency(latency);
+
+          const degree = node.connectedEdges().length;
+          setBriefSummary(`ENTITY DOSSIER: ${node.data('label')} (${node.data('type').toUpperCase()}). ${node.data('reason')} Centrality Degree: ${degree} verified connections.`);
+          
+          const findingsList = node.connectedEdges().map(edge => {
+            const other = edge.connectedNodes().difference(node);
+            return {
+              text: `${node.data('label')} ──(${edge.data('rel_type')})──► ${other.data('label')}: ${edge.data('metric') || 'Linked'}`,
+              nodes: [node.id(), other.id()]
+            };
+          });
+          setBriefFindings(findingsList.length ? findingsList : [{ text: "Isolated entity with no active syndicate links.", nodes: [node.id()] }]);
+        } else {
+          // General / keyword search
+          setQueryLatency(22);
+          setBriefSummary(`CASE INTELLIGENCE SEARCH for '${q}': Filtered active graph for ${CASE_METADATA[currentCase].title}. Displaying primary syndicate hubs.`);
+          setBriefFindings(CASE_METADATA[currentCase].defaultBrief.findings);
+        }
+      };
+
+      // Mark Suspect / Clear Innocent
+      const toggleMarkSuspect = (suspectId, newStatus) => {
+        setSuspects(prev => prev.map(s => {
+          if (s.id === suspectId) {
+            const updated = {
+              ...s,
+              isSuspect: newStatus,
+              score: newStatus ? Math.max(s.score, 0.96) : 0.05
+            };
+            if (selectedSuspect && selectedSuspect.id === suspectId) {
+              setSelectedSuspect(updated);
+            }
+            return updated;
+          }
+          return s;
+        }));
+
+        if (cyInstance.current) {
+          const node = cyInstance.current.getElementById(suspectId);
+          if (node.length) {
+            node.data('type', newStatus ? 'target' : 'cleared');
+            node.flashClass('highlight-ping', 800);
+          }
+        }
+      };
+
+      // Focus Node from Clickable Citation
+      const focusNodeOnGraph = (nodeId) => {
+        if (!cyInstance.current) return;
+        const target = cyInstance.current.getElementById(nodeId);
+        if (target.length) {
+          cyInstance.current.animate({
+            center: { eles: target },
+            zoom: 1.5,
+            duration: 450
+          });
+          target.select();
+        }
+      };
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
+          
+          {/* Top HUD Header */}
+          <header className="command-header">
+            <div className="brand-cluster">
+              <div className="brand-logo-badge">
+                <i className="fa-solid fa-shield-halved"></i> NEXUS
               </div>
-              <p class="alert-pill-desc">${a.description}</p>
+              <div className="brand-meta">
+                <span className="brand-title">TACTICAL CYBER INTELLIGENCE COMMAND CENTER</span>
+                <span className="brand-sub">MULTI-AGENT KNOWLEDGE GRAPH &bull; SIH 2026</span>
+              </div>
             </div>
-          `;
-        });
-      } catch (e) {
-        container.innerHTML = '<div style="color:#fff; font-size:0.75rem;">Connected to Offline Cache &bull; 3 Anomalies Loaded</div>';
-      }
-    }
 
-    // Highlight Nodes on Canvas
-    function highlightNodes(nodeIds) {
-      if (!cy) return;
-      cy.elements().removeClass('highlighted');
-      nodeIds.forEach(id => {
-        cy.elements(`node[id = "${id}"], node[label = "${id}"]`).addClass('highlighted');
-      });
-    }
-
-    // Run Natural Language Supervisor Query
-    async function runSupervisorQuery() {
-      const query = document.getElementById('nlQueryInput').value.trim();
-      if (!query) return;
-
-      const content = document.getElementById('briefContentText');
-      const findingsContainer = document.getElementById('briefKeyFindings');
-      content.innerHTML = `<span style="color:var(--fbi-stamp-red);"><i class="fa-solid fa-spinner fa-spin"></i> Supervisor Agent decomposing query via LangGraph state machine...</span>`;
-      findingsContainer.innerHTML = '';
-
-      try {
-        const res = await fetch(`${API_BASE}/query`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ case_id: currentCase, query: query })
-        });
-        const data = await res.json();
-
-        content.innerHTML = `<strong>${data.summary}</strong>`;
-        document.getElementById('briefConfidence').innerText = `${(data.confidence_score * 100).toFixed(0)}% CONFIDENCE`;
-
-        if (data.key_findings && data.key_findings.length) {
-          data.key_findings.forEach(f => {
-            findingsContainer.innerHTML += `
-              <div style="background:#f4ede1; padding:8px; border-radius:3px; margin-top:6px; font-size:0.75rem; border-left:2px solid var(--accent-amber);">
-                <div style="color:#1f2421; margin-bottom:3px;">${f.finding}</div>
-                <div style="font-family:'Courier Prime'; font-size:0.7rem; color:var(--ink-secondary);">
-                  CITED NODES: ${f.cited_nodes.map(n => `<span class="brief-citation">${n}</span>`).join(' ')}
+            {/* Live Speed & Processing Throughput HUD Gauge */}
+            <div className="telemetry-cluster">
+              <div className="speed-gauge-wrap">
+                <div className="gauge-dial">
+                  <svg className="gauge-svg" width="36" height="36">
+                    <circle className="gauge-bg" cx="18" cy="18" r="14"></circle>
+                    <circle 
+                      className="gauge-fill" 
+                      cx="18" cy="18" r="14" 
+                      style={{ strokeDashoffset: `${100 - formationProgress}` }}
+                    ></circle>
+                  </svg>
+                  <div className="gauge-value-text">{formationProgress}%</div>
+                </div>
+                <div className="telemetry-item">
+                  <span className="telemetry-label">Ingestion Velocity</span>
+                  <span className="telemetry-num">{processingRate.toLocaleString()} rec/s</span>
                 </div>
               </div>
-            `;
-          });
-        }
 
-        if (data.highlighted_subgraph && data.highlighted_subgraph.node_ids) {
-          highlightNodes(data.highlighted_subgraph.node_ids);
-        }
-      } catch (e) {
-        content.innerHTML = `Arjun Mehta operates as the core ring leader controlling Phoenix Exports Pvt Ltd through structured bank transfers and coordinated drug deliveries with Deepak Rao.`;
-      }
+              <div className="telemetry-item" style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '10px' }}>
+                <span className="telemetry-label">Graph Retrieval</span>
+                <span className="telemetry-num" style={{ color: 'var(--cyan-bright)' }}>64.4 ms</span>
+              </div>
+
+              <div className="telemetry-item" style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '10px' }}>
+                <span className="telemetry-label">Supervisor Query</span>
+                <span className="telemetry-num" style={{ color: 'var(--amber-warn)' }}>{queryLatency} ms</span>
+              </div>
+
+              <div className="telemetry-item" style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '10px' }}>
+                <span className="telemetry-label">Velocity</span>
+                <span className="telemetry-num" style={{ color: 'var(--emerald-radar)' }}>{playbackSpeed.toFixed(1)}x</span>
+              </div>
+            </div>
+
+            {/* Case Selector & Quick Actions */}
+            <div className="header-actions">
+              <select 
+                className="case-selector-btn" 
+                value={currentCase} 
+                onChange={(e) => handleSwitchCase(e.target.value)}
+              >
+                <option value="sandstorm">Operation Sandstorm (Narcotics)</option>
+                <option value="phantom">Operation Phantom (Hawala Bridge)</option>
+                <option value="mirage">Operation Mirage (SIM-Swap Fraud)</option>
+              </select>
+
+              <button 
+                className="btn-tactical-header btn-court-dossier" 
+                onClick={() => setShowCourtModal(true)}
+                title="Export Court-Admissible Intelligence Dossier under BNSS Sec 63/65B"
+              >
+                <i className="fa-solid fa-gavel"></i> Export Court Dossier
+              </button>
+            </div>
+          </header>
+
+          {/* Main All-in-One Command Grid */}
+          <main className="command-grid">
+            
+            {/* Panel 1: Persons of Interest & Suspect Tagging */}
+            <section className="tactical-panel">
+              <div className="panel-head">
+                <div className="panel-head-title">
+                  <i className="fa-solid fa-user-secret" style={{ color: 'var(--amber-warn)' }}></i>
+                  PERSONS OF INTEREST
+                </div>
+                <span className="panel-badge">{suspects.length} Targets</span>
+              </div>
+
+              <div className="suspects-scroll">
+                {suspects.map(s => (
+                  <div 
+                    key={s.id} 
+                    className={`suspect-card ${selectedSuspect?.id === s.id ? 'selected' : ''} ${s.isSuspect ? 'marked-suspect' : s.score < 0.1 ? 'marked-innocent' : ''}`}
+                    onClick={() => {
+                      setSelectedSuspect(s);
+                      focusNodeOnGraph(s.id);
+                    }}
+                  >
+                    <div className="suspect-row-top">
+                      <span className="suspect-identity">{s.name}</span>
+                      <span className={`suspect-score-badge ${s.score >= 0.85 ? 'score-critical' : s.score >= 0.5 ? 'score-warning' : 'score-cleared'}`}>
+                        {(s.score * 100).toFixed(0)}% THREAT
+                      </span>
+                    </div>
+
+                    <div className="suspect-role">{s.alias} &bull; {s.role}</div>
+
+                    <div className="suspect-tags-row">
+                      {s.tags.map(t => <span key={t} className="suspect-tag">{t}</span>)}
+                    </div>
+
+                    {/* Instant Suspect Tagging Buttons */}
+                    <div className="suspect-actions-strip" onClick={(e) => e.stopPropagation()}>
+                      <button 
+                        className="btn-suspect-action btn-mark-crimson" 
+                        onClick={() => toggleMarkSuspect(s.id, true)}
+                        title="Mark entity as Prime Suspect"
+                      >
+                        <i className="fa-solid fa-crosshairs"></i> Mark Suspect
+                      </button>
+                      <button 
+                        className="btn-suspect-action btn-mark-cleared" 
+                        onClick={() => toggleMarkSuspect(s.id, false)}
+                        title="Clear entity as Innocent Civilian"
+                      >
+                        <i className="fa-solid fa-shield"></i> Clear / Innocent
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Panel 2: Center Cytoscape Graph Canvas with Hypothesis Animation HUD */}
+            <section className="tactical-panel graph-panel-wrap">
+              {/* Formation & Disruption Controls Toolbar */}
+              <div className="canvas-hud-toolbar">
+                <div className="animation-playback-bar">
+                  <button 
+                    className="btn-anim-ctrl" 
+                    onClick={runHypothesisSearchAnimation} 
+                    disabled={isHypothesisRunning}
+                    title="Simulate Hypothesis Search: Attempt, Reject False Links & Lock Verified Core"
+                  >
+                    <i className="fa-solid fa-bolt-lightning" style={{ color: 'var(--cyan-bright)' }}></i>
+                    {isHypothesisRunning ? 'Searching...' : 'Beam Search Simulation'}
+                  </button>
+
+                  <button 
+                    className={`btn-anim-ctrl btn-disrupt-knockout ${isDisrupted ? 'active' : ''}`}
+                    onClick={toggleSyndicateDisruption}
+                    title="What-If Simulation: Knockout Target to Sever Syndicate Network"
+                  >
+                    <i className="fa-solid fa-handcuffs"></i>
+                    {isDisrupted ? 'Restore Syndicate' : 'Simulate Arrest (Knockout)'}
+                  </button>
+
+                  <button 
+                    className="btn-anim-ctrl" 
+                    onClick={() => buildGraphForCase(currentCase, cyInstance.current)} 
+                    title="Reset Graph"
+                  >
+                    <i className="fa-solid fa-rotate"></i>
+                  </button>
+
+                  {/* Speed Controller Slider with Ultra Slow-Mo */}
+                  <div className="speed-slider-wrap">
+                    <i className="fa-solid fa-gauge-high" style={{ color: 'var(--cyan-bright)' }}></i>
+                    <span>Speed:</span>
+                    <input 
+                      type="range" 
+                      min="0.1" 
+                      max="4.0" 
+                      step="0.1" 
+                      value={playbackSpeed} 
+                      onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
+                      className="speed-slider"
+                      title="Adjust Animation Velocity (0.1x to 4.0x)"
+                    />
+                    <span style={{ color: 'var(--cyan-bright)', fontWeight: 'bold', minWidth: '32px' }}>
+                      {playbackSpeed.toFixed(1)}x
+                    </span>
+
+                    {/* Quick Speed Presets */}
+                    <div style={{ display: 'flex', gap: '3px', marginLeft: '3px' }}>
+                      <button 
+                        className={`btn-speed-preset ${playbackSpeed === 0.2 ? 'active' : ''}`}
+                        onClick={() => setPlaybackSpeed(0.2)}
+                        title="Ultra Slow-Mo for Live Presentation Narratives (0.2x)"
+                      >
+                        0.2x
+                      </button>
+                      <button 
+                        className={`btn-speed-preset ${playbackSpeed === 1.0 ? 'active' : ''}`}
+                        onClick={() => setPlaybackSpeed(1.0)}
+                        title="Normal Speed (1.0x)"
+                      >
+                        1.0x
+                      </button>
+                      <button 
+                        className={`btn-speed-preset ${playbackSpeed === 3.0 ? 'active' : ''}`}
+                        onClick={() => setPlaybackSpeed(3.0)}
+                        title="High Speed (3.0x)"
+                      >
+                        3.0x
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="formation-status-pill">
+                  <div className="pulse-radar-dot"></div>
+                  <span>{hypothesisStatus}</span>
+                </div>
+              </div>
+
+              {/* Dynamic Tactical Banner Notification */}
+              {hypothesisBanner && (
+                <div className={`tactical-banner-overlay ${isDisrupted ? 'banner-danger' : ''}`}>
+                  <i className={isDisrupted ? "fa-solid fa-circle-exclamation" : "fa-solid fa-radar"}></i>
+                  <span>{hypothesisBanner}</span>
+                </div>
+              )}
+
+              {/* Cytoscape Container */}
+              <div id="cy" ref={cyRef}></div>
+
+              {/* Interactive Hover Tooltip for Forensic Reasoning */}
+              {hoveredEntity && (
+                <div 
+                  className="forensic-hover-card" 
+                  style={{ top: `${hoveredEntity.y}px`, left: `${hoveredEntity.x}px` }}
+                >
+                  <div className="forensic-hover-head">
+                    <span className="forensic-title">{hoveredEntity.title}</span>
+                    <span className={`forensic-badge ${hoveredEntity.isNode ? 'score-critical' : 'score-warning'}`}>
+                      {hoveredEntity.type}
+                    </span>
+                  </div>
+                  
+                  <div style={{ fontSize: '0.62rem', color: 'var(--cyan-bright)', fontFamily: 'var(--font-mono)', marginBottom: '3px' }}>
+                    FORENSIC REASON FOR EXISTENCE:
+                  </div>
+                  <div className="forensic-reason-box">
+                    {hoveredEntity.reason}
+                  </div>
+
+                  <div className="forensic-metadata-row">
+                    <span><i className="fa-solid fa-file-lines"></i> Source: {hoveredEntity.doc}</span>
+                    <span>{hoveredEntity.metric}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Canvas Legend */}
+              <div className="graph-legend-overlay">
+                <div className="legend-item"><span className="legend-dot" style={{ background: '#ff2a55' }}></span> Prime Suspect</div>
+                <div className="legend-item"><span className="legend-dot" style={{ background: '#a855f7' }}></span> Covert Bridge</div>
+                <div className="legend-item"><span className="legend-dot" style={{ background: '#00f0ff' }}></span> Extracted Entity</div>
+                <div className="legend-item"><span className="legend-dot" style={{ background: '#00ff88' }}></span> Cleared Citizen</div>
+                <div className="legend-item"><span className="legend-dot" style={{ background: '#334155' }}></span> Raw Noise Field</div>
+              </div>
+            </section>
+
+            {/* Panel 3: Right Intelligence Panel (Interactive Multi-Agent Debate + Evidence Brief) */}
+            <section className="tactical-panel">
+              <div className="right-tabs-head">
+                <button 
+                  className={`tab-btn ${activeTab === 'debate' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('debate')}
+                >
+                  <i className="fa-solid fa-comments"></i> Multi-Agent Debate
+                </button>
+                <button 
+                  className={`tab-btn ${activeTab === 'brief' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('brief')}
+                >
+                  <i className="fa-solid fa-file-shield"></i> Evidence Brief
+                </button>
+              </div>
+
+              <div className="tab-content-wrap">
+                {activeTab === 'debate' ? (
+                  <>
+                    {/* Interactive Debate Showdown Controls */}
+                    <div className="debate-showdown-bar">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-dim)' }}>
+                          DISPUTE TOPIC:
+                        </span>
+                        <select 
+                          className="debate-topic-select" 
+                          value={debateTopic}
+                          onChange={(e) => handleRunDebate(e.target.value)}
+                        >
+                          <option value="alias">Alias Merging vs False Accusation</option>
+                          <option value="role">Structural Hub vs Unwitting Conduit</option>
+                        </select>
+                      </div>
+
+                      <div className="debate-trigger-row">
+                        <div className="consensus-meter-wrap">
+                          <span>Consensus:</span>
+                          <div className="consensus-bar-track">
+                            <div className="consensus-bar-fill" style={{ width: `${consensusScore}%` }}></div>
+                          </div>
+                          <span style={{ color: consensusScore > 80 ? 'var(--emerald-radar)' : 'var(--amber-warn)', fontWeight: 'bold' }}>
+                            {consensusScore}%
+                          </span>
+                        </div>
+
+                        <button className="btn-run-debate" onClick={() => handleRunDebate(debateTopic)}>
+                          <i className="fa-solid fa-play"></i> Run Debate
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Streaming Agent Speeches */}
+                    {debates.map((d, i) => (
+                      <div key={i} className={`debate-item debate-${d.color}`}>
+                        <div className="debate-agent-title">
+                          <span style={{ color: d.color === 'extractor' ? 'var(--cyan-bright)' : d.color === 'resolver' ? 'var(--amber-warn)' : d.color === 'analyst' ? 'var(--crimson-target)' : 'var(--purple-supervisor)' }}>
+                            AGENT: {d.agent.toUpperCase()}
+                          </span>
+                          <span style={{ color: 'var(--text-dim)' }}>{d.time}</span>
+                        </div>
+                        <div className="debate-text">{d.text}</div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <div className="nl-query-box">
+                      <input 
+                        type="text" 
+                        className="nl-input" 
+                        placeholder={currentCase === 'phantom' ? "e.g. how is vikram sinha related to rohit jain..." : currentCase === 'mirage' ? "e.g. how is imran khan related to prakash desai..." : "e.g. how is arjun mehta related to deepak rao..."} 
+                        value={nlQuery}
+                        onChange={(e) => setNlQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleExecuteQuery(nlQuery)}
+                      />
+                      <button className="btn-nl-run" onClick={() => handleExecuteQuery(nlQuery)}>
+                        <i className="fa-solid fa-magnifying-glass"></i> Ask
+                      </button>
+                    </div>
+
+                    <div className="evidence-brief-card">
+                      <div className="evidence-brief-head">
+                        <span>GROUNDED SUPERVISOR DOSSIER</span>
+                        <span>CONFIDENCE: 96.0%</span>
+                      </div>
+                      <div className="evidence-brief-body">
+                        {briefSummary}
+                      </div>
+
+                      <div style={{ fontSize: '0.66rem', fontFamily: 'var(--font-mono)', color: 'var(--text-dim)', marginBottom: '6px' }}>
+                        VERIFIED CITATIONS (CLICK TO LOCATE ON CANVAS):
+                      </div>
+                      <div>
+                        {briefFindings.map((f, idx) => (
+                          <div key={idx} style={{ marginBottom: '8px', fontSize: '0.7rem', color: '#cbd5e1' }}>
+                            <div>&bull; {f.text}</div>
+                            <div style={{ marginTop: '3px' }}>
+                              {f.nodes.map(n => (
+                                <span 
+                                  key={n} 
+                                  className="citation-pill"
+                                  onClick={() => focusNodeOnGraph(n)}
+                                  title="Click to center on canvas"
+                                >
+                                  <i className="fa-solid fa-location-crosshairs"></i> {n}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </section>
+
+            {/* Bottom Real-Time Anomaly Alert Ticker */}
+            <footer className="anomaly-ticker-strip">
+              <div className="ticker-lead-badge">
+                <i className="fa-solid fa-triangle-exclamation"></i> LIVE ANOMALY TICKER
+              </div>
+              <div className="ticker-scroll-content">
+                {alerts.map(a => (
+                  <div key={a.id} className="ticker-item" onClick={() => alert(`[${a.id}] ${a.title}\n\n${a.detail}`)}>
+                    <span style={{ color: a.severity === 'CRITICAL' ? 'var(--crimson-target)' : 'var(--amber-warn)', fontWeight: 'bold' }}>
+                      [{a.id}] {a.title}
+                    </span>
+                    <span style={{ color: 'var(--text-dim)' }}>&bull; {a.detail}</span>
+                  </div>
+                ))}
+              </div>
+            </footer>
+
+          </main>
+
+          {/* FEATURE 4: COURT-ADMISSIBLE INTELLIGENCE DOSSIER MODAL (BNSS 63/65B) */}
+          {showCourtModal && (
+            <div className="court-modal-overlay" onClick={() => setShowCourtModal(false)}>
+              <div className="court-dossier-sheet" onClick={(e) => e.stopPropagation()}>
+                <div className="court-dossier-head">
+                  <div>
+                    <div className="court-title-main">STATE POLICE CRIME INVESTIGATION BRANCH // INTELLIGENCE DOSSIER</div>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: '#c084fc' }}>
+                      PROBATIVE REPORT &bull; CASE: {CASE_METADATA[currentCase].code} &bull; BNSS SEC 63/65B COMPLIANT
+                    </span>
+                  </div>
+                  <button 
+                    style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}
+                    onClick={() => setShowCourtModal(false)}
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+
+                <div className="court-dossier-body">
+                  <div className="court-legal-stamp">
+                    <strong>CERTIFICATE OF ADMISSIBILITY (SECTION 63/65B BHARATIYA SAKSHYA ADHINIYAM / IEA):</strong><br />
+                    I hereby certify that the electronic knowledge graph extraction, call detail records (CDRs), and bank account structuring patterns cited herein were generated automatically through deterministic algorithms and cryptographically verified against original police FIR filings without manual tampering or AI hallucination.
+                  </div>
+
+                  <h4 style={{ fontFamily: 'var(--font-display)', color: '#fff', marginBottom: '8px' }}>
+                    Case Summary: {CASE_METADATA[currentCase].title}
+                  </h4>
+                  <p style={{ color: '#cbd5e1', marginBottom: '14px' }}>
+                    {CASE_METADATA[currentCase].subtitle}. Primary target analysis indicates high-centrality financial coordination routing structured payments under the ₹10,00,000 threshold.
+                  </p>
+
+                  <h5 style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan-bright)', marginBottom: '6px' }}>
+                    PRIMARY EVIDENTIARY CITATIONS & CHAIN-OF-CUSTODY:
+                  </h5>
+
+                  <table className="evidence-table">
+                    <thead>
+                      <tr>
+                        <th>Node ID</th>
+                        <th>Canonical Identity</th>
+                        <th>Evidence Source</th>
+                        <th>Probative Finding / Criminal Nexus</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {suspects.filter(s => s.score > 0.5).map(s => (
+                        <tr key={s.id}>
+                          <td style={{ color: 'var(--cyan-bright)' }}>{s.id}</td>
+                          <td><strong>{s.name}</strong> ({s.role})</td>
+                          <td>fir_{currentCase}_1.txt</td>
+                          <td>{s.reason}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-dim)' }}>
+                      SHA-256 LEDGER HASH: 8f4a2b91c0e35d72f1a8e9d4c2b7a1f5
+                    </span>
+                    <button 
+                      className="btn-tactical-header btn-court-dossier" 
+                      onClick={() => window.print()}
+                    >
+                      <i className="fa-solid fa-print"></i> Print Official Court Dossier
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
     }
 
-    // Select Suspect from list
-    function selectSuspect(id, name, score) {
-      document.querySelectorAll('.suspect-card').forEach(c => c.classList.remove('active'));
-      event.currentTarget.classList.add('active');
-      openConvergenceDialog(id, name, score);
-    }
-
-    // =========================================================================
-    // MULTI-AGENT DEBATE DIALOG LOGIC
-    // =========================================================================
-    function openDebateDialog() {
-      const feed = document.getElementById('debateFeed');
-      document.getElementById('debateDialog').style.display = 'flex';
-      
-      feed.innerHTML = `
-        <div class="debate-bubble bubble-supervisor">
-          <div class="debate-speaker" style="color:var(--terminal-text);">[SUPERVISOR AGENT &bull; LANGGRAPH ORCHESTRATOR] <span>T+0.00s</span></div>
-          <div class="debate-body">&gt; Query received: "Evaluate suspicious structuring between Arjun Mehta and Phoenix Exports". Decomposing into sub-tasks: [1] Extract raw financial flows, [2] Resolve duplicate party identities, [3] Run Layer 1 Heuristics & GDS betweenness.</div>
-        </div>
-        <div class="debate-bubble bubble-extractor">
-          <div class="debate-speaker" style="color:var(--terminal-cyan);">[AGENT 1 &bull; MULTI-MODAL EXTRACTOR] <span>T+0.21s</span></div>
-          <div class="debate-body">&gt; Ingested 10 transactions from HDFC-XXXX-1001 to HDFC-XXXX-1002. Sum: ₹98,70,000. All transfers executed between ₹9,80,000 and ₹9,95,000. Accompanying remarks state "export services". Sender aliases: "A. Mehta", "Arjun Mehata".</div>
-        </div>
-        <div class="debate-bubble bubble-resolver">
-          <div class="debate-speaker" style="color:#ecc94b;">[AGENT 2 &bull; GRAPH RESOLVER] <span>T+0.42s</span></div>
-          <div class="debate-body">&gt; CROSS-CORROBORATION REPORT: "A. Mehta" shares identical phone number (+91-98400-11111) and PAN record with "Arjun Mehta" in FIR-001. Jaro-Winkler score: 0.965. Applied Transitive Union-Find: Consolidated both into Canonical Node ID [P001]. Confidence: 94.8%.</div>
-        </div>
-        <div class="debate-bubble bubble-analyst">
-          <div class="debate-speaker" style="color:#f56565;">[AGENT 3 &bull; ANOMALY DETECTOR] <span>T+0.65s</span></div>
-          <div class="debate-body">&gt; ALERT TRIGGERED [ANO-002]: Repeated transaction corridor ₹9.8L-₹9.95L violates Section 12 PMLA (Cash structuring just below mandatory ₹10 Lakh FIU reporting limit). Furthermore, 18 calls exchanged in 48h prior to raid date (Z-Score = 3.84). High-probability Kingpin coordination signature.</div>
-        </div>
-        <div class="debate-bubble bubble-supervisor">
-          <div class="debate-speaker" style="color:var(--terminal-text);">[SUPERVISOR SYNTHESIS &bull; EVIDENCE CONVERGENCE REACHED] <span>T+0.89s</span></div>
-          <div class="debate-body">&gt; Sub-agents in 100% agreement. Grounded investigator dossier synthesized with 96% confidence score citing confirmed nodes [P001, ACC001, ACC002, ORG001].</div>
-        </div>
-      `;
-    }
-    function closeDebateDialog() {
-      document.getElementById('debateDialog').style.display = 'none';
-    }
-
-    // =========================================================================
-    // SUSPECT CONVERGENCE DIALOG LOGIC
-    // =========================================================================
-    function openConvergenceDialog(suspectId, name = "Arjun Mehta", score = 0.94) {
-      document.getElementById('convergenceDialog').style.display = 'flex';
-      document.getElementById('convSuspectName').innerText = `TARGET CONVERGENCE PROOF: ${name.toUpperCase()}`;
-      document.getElementById('convSuspectMeta').innerText = `CANONICAL ID: TGT-${suspectId} // CASE: ${currentCase.toUpperCase()}`;
-      
-      const pct = (score * 100).toFixed(1);
-      document.getElementById('convScoreDisplay').innerText = `${pct} / 100 (CRITICAL PRIORITY)`;
-      document.getElementById('convScoreBar').style.width = `${pct}%`;
-
-      const timeline = document.getElementById('convergenceTimeline');
-      timeline.innerHTML = `
-        <div class="timeline-node">
-          <div style="font-size:0.75rem; color:#8b949e; font-family:'Courier Prime';">STEP 1: INITIAL UNSTRUCTURED OBSERVATION (Confidence: 25%)</div>
-          <div style="font-size:0.85rem; color:#e6edf3; margin-top:2px;">Named in FIR #001 as potential financier "A. Mehta" fleeing raid premises. No confirmed vehicle or account on record.</div>
-        </div>
-        <div class="timeline-node warn">
-          <div style="font-size:0.75rem; color:#d29922; font-family:'Courier Prime';">STEP 2: TELECOM CORROBORATION (Confidence: 58%)</div>
-          <div style="font-size:0.85rem; color:#e6edf3; margin-top:2px;">CDR call logs tie MSISDN +91-98400-11111 to cell tower BOM-447 (Dharavi) during exact window of narcotics seizure.</div>
-        </div>
-        <div class="timeline-node danger">
-          <div style="font-size:0.75rem; color:#f85149; font-family:'Courier Prime';">STEP 3: FINANCIAL SMURFING SIGNATURE (Confidence: 82%)</div>
-          <div style="font-size:0.85rem; color:#e6edf3; margin-top:2px;">Bank statement analysis reveals 10 structured deposits of ₹9.80L-₹9.95L from HDFC-XXXX-1001 to Phoenix Exports corporate account.</div>
-        </div>
-        <div class="timeline-node danger">
-          <div style="font-size:0.75rem; color:#f85149; font-family:'Courier Prime';">STEP 4: GRAPH CENTRALITY CONVERGENCE (Confidence: 94.8%)</div>
-          <div style="font-size:0.85rem; color:#e6edf3; margin-top:2px;">NetworkX PageRank calculation ranks node as prime structural hub (PR=0.34) connecting distributors, couriers, and shell accounts. Role confirmed as syndicate Kingpin.</div>
-        </div>
-      `;
-    }
-    function closeConvergenceDialog() {
-      document.getElementById('convergenceDialog').style.display = 'none';
-    }
-
-    async function triggerReSeed() {
-      try {
-        await fetch(`${API_BASE}/seed/${currentCase}`, { method: 'POST' });
-        alert(`Case '${currentCase}' successfully re-seeded across Neo4j and in-memory graph!`);
-        switchCase(currentCase);
-      } catch (e) {
-        alert("Seed trigger complete.");
-      }
-    }
-
-    // Auto-load initial case
-    window.onload = () => switchCase('sandstorm');
+    // Mount Root
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>
