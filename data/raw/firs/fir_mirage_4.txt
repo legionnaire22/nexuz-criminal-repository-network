@@ -1,0 +1,77 @@
+FIRST INFORMATION REPORT
+(Under Section 154 Cr.P.C. / BNSS 2023)
+═══════════════════════════════════════════════════════════════════
+
+FIR No         : MH-0088/2025/0131
+Date of Filing : 20/05/2025
+Time of Filing : 16:20
+Police Station : Bandra Police Station
+District       : Mumbai (Suburban)
+State          : Maharashtra
+Section of BNS : Section 3, 4 PMLA; Section 66C IT Act; Section 120-B IPC
+
+═══════════════════════════════════════════════════════════════════
+1. COMPLAINANT DETAILS
+═══════════════════════════════════════════════════════════════════
+Name      : Inspector Meena Subramaniam
+Badge No. : MH-CID-0301
+Unit      : Cyber Crime Division, Mumbai
+Phone     : +91-98400-90005
+
+═══════════════════════════════════════════════════════════════════
+2. ACCUSED DETAILS
+═══════════════════════════════════════════════════════════════════
+Accused No. 1
+  Name    : I. Khan              [NOTE: Alias — canon: Imran Khan]
+  Phone   : +91-96200-11111
+  Account : PNB-XXXX-6001
+  Status  : Arrested 19/05/2025
+
+Accused No. 2
+  Name    : Arun Tiwary          [NOTE: Alias — canon: Arun Tiwari]
+  Phone   : +91-96200-33333
+  Account : BOI-XXXX-6003
+  Status  : Arrested 19/05/2025
+
+Accused No. 3
+  Name    : S. Yadav             [NOTE: Alias — canon: Sanjay Yadav]
+  Phone   : +91-96200-44444
+  Account : BOI-XXXX-6004
+  Status  : Arrested 19/05/2025
+
+═══════════════════════════════════════════════════════════════════
+3. DESCRIPTION OF INCIDENT
+═══════════════════════════════════════════════════════════════════
+Cyber Crime Division investigation consolidates findings from FIR 0091,
+0099, and 0114 into a single organised ring.
+
+CDR analysis confirms that I. Khan (+91-96200-11111), Arun Tiwary
+(+91-96200-33333), S. Yadav (+91-96200-44444), and P. Desai
+(+91-96200-22222) were co-located at Tower BKC-112 on 29/04/2025
+(22:00–23:30) and Tower MLW-88 on 08/05/2025 (21:30–22:45).
+Physical co-location immediately before fraud execution on both dates.
+
+Transaction velocity analysis on PNB-XXXX-6001 (I. Khan):
+  – 8 inward credits between Rs. 4,00,000 and Rs. 4,80,000
+  – All received between 02:00 and 04:00 hours (anomalous time window)
+  – All to new recipient accounts with no prior transaction history
+  – All within a 35-day window (15/04/2025 – 20/05/2025)
+
+I. Khan was apprehended at Chhatrapati Shivaji International Airport
+on 19/05/2025 attempting to board a flight to Dubai.
+Arun Tiwary and S. Yadav were arrested simultaneously at their residences.
+
+Apex Digital Svcs and NextGen Sol. are to be deregistered. Their accounts
+are frozen pending PMLA proceedings.
+
+═══════════════════════════════════════════════════════════════════
+4. WITNESSES
+═══════════════════════════════════════════════════════════════════
+1. Kavya Nair (FIR 0091 complainant)
+2. Thomas Mathew (FIR 0099 complainant)
+3. B.O. Sharma (FIR 0114 complainant)
+4. Airport Security – CSIA (arrest confirmed)
+
+Signature of Complainant : Insp. M. Subramaniam, Cyber Crime
+Signature of IO          : PI Avinash Kadam
+Date/Time Recorded       : 20/05/2025 / 16:20 hrs

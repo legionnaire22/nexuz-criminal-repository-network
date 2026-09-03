@@ -1,0 +1,77 @@
+FIRST INFORMATION REPORT
+(Under Section 154 Cr.P.C. / BNSS 2023)
+═══════════════════════════════════════════════════════════════════
+
+FIR No         : MH-0088/2025/0114
+Date of Filing : 12/05/2025
+Time of Filing : 11:00
+Police Station : Bandra Police Station
+District       : Mumbai (Suburban)
+State          : Maharashtra
+Section of BNS : Section 66C, 66D IT Act; Section 420, 471 IPC
+
+═══════════════════════════════════════════════════════════════════
+1. COMPLAINANT DETAILS
+═══════════════════════════════════════════════════════════════════
+Name      : B.O. Sharma
+Designation: Branch Manager, Canara Bank, Bandra West Branch
+Phone     : +91-22-2640-4411
+Address   : Canara Bank, Turner Road, Bandra West, Mumbai – 400050
+
+═══════════════════════════════════════════════════════════════════
+2. ACCUSED DETAILS
+═══════════════════════════════════════════════════════════════════
+Accused No. 1
+  Name    : Imraan Khan            [NOTE: Alias — canon: Imran Khan]
+  Phone   : +91-96200-11111
+  Account : PNB-XXXX-6001
+  Status  : Warrant issued; location under investigation
+
+Accused No. 2
+  Name    : Pooja D.              [NOTE: Alias — canon: Pooja Desai]
+  Phone   : +91-96200-22222
+  Address : 33, Sion Koliwada, Sion, Mumbai – 400022
+  Status  : Arrested 11/05/2025
+
+Accused No. 3 (Entity)
+  Name    : Apex Digital Svcs     [NOTE: Alias — canon: Apex Digital Services]
+  Account : KOTAK-XXXX-7001
+  Address : 402, Trade Wings, BKC, Mumbai – 400051
+  Director: Listed as Arun Tiwary  [NOTE: Alias — canon: Arun Tiwari]
+
+═══════════════════════════════════════════════════════════════════
+3. DESCRIPTION OF INCIDENT
+═══════════════════════════════════════════════════════════════════
+Bank Officer Sharma reports that a pattern of fraudulent SIM-swap
+enabled transactions was identified across 6 Canara Bank customers
+between 15/04/2025 and 10/05/2025.
+
+In each case, the customer's mobile number was cloned between 02:00
+and 04:00 hours, and funds were immediately transferred out via OTP.
+All receiving accounts trace back to:
+  (a) PNB-XXXX-6001 (Imraan Khan)
+  (b) KOTAK-XXXX-7001 (Apex Digital Svcs, director: Arun Tiwary)
+  (c) KOTAK-XXXX-7002 (NextGen Sol., same registered agent)
+
+Pooja D. was arrested on 11/05/2025 following identification from
+CCTV at the telecom service centre. She facilitated at least 4 SIM
+swaps using forged documentation.
+
+Analysis of KOTAK-XXXX-7001 (Apex Digital Svcs) shows 8 inward credits
+between Rs. 4,00,000 and Rs. 4,80,000, all received between 02:00 and
+04:00 hours — an anomalous time window for commercial transactions —
+followed by immediate outward IMPS transfers in round-number amounts.
+
+All transactions flagged by bank's automated system but not escalated
+in time. STR filed with FIU-IND (Ref: STR-MH-2025-08822).
+
+═══════════════════════════════════════════════════════════════════
+4. DOCUMENTS ATTACHED
+═══════════════════════════════════════════════════════════════════
+  – Account statements KOTAK-XXXX-7001, KOTAK-XXXX-7002
+  – CCTV screenshots of Pooja D. at telecom service centre
+  – STR-MH-2025-08822
+
+Signature of Complainant : B.O. Sharma, Canara Bank
+Signature of IO          : PI Avinash Kadam, Bandra PS
+Date/Time Recorded       : 12/05/2025 / 11:00 hrs

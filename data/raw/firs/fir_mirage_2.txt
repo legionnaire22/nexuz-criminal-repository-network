@@ -1,0 +1,80 @@
+FIRST INFORMATION REPORT
+(Under Section 154 Cr.P.C. / BNSS 2023)
+═══════════════════════════════════════════════════════════════════
+
+FIR No         : MH-0088/2025/0099
+Date of Filing : 05/05/2025
+Time of Filing : 14:50
+Police Station : Bandra Police Station
+District       : Mumbai (Suburban)
+State          : Maharashtra
+Section of BNS : Section 66C, 66D IT Act; Section 420 IPC; Section 120-B IPC
+
+═══════════════════════════════════════════════════════════════════
+1. COMPLAINANT DETAILS
+═══════════════════════════════════════════════════════════════════
+Name      : Thomas Mathew
+Age       : 48
+Address   : 5A, St. Mary's CHS, Khar West, Mumbai – 400052
+Phone     : +91-96200-66666
+Occupation: Businessman
+
+═══════════════════════════════════════════════════════════════════
+2. ACCUSED DETAILS
+═══════════════════════════════════════════════════════════════════
+Accused No. 1
+  Name    : I. Khan               [NOTE: Alias — canon: Imran Khan]
+  Phone   : +91-96200-11111
+  Account : PNB-XXXX-6001
+
+Accused No. 2
+  Name    : A. Tiwari             [NOTE: Alias — canon: Arun Tiwari]
+  Address : 77, Laxmi Nagar, Ghatkopar East, Mumbai – 400077
+  Phone   : +91-96200-33333
+  Account : BOI-XXXX-6003
+  Role    : Money mule
+
+Accused No. 3
+  Name    : Sanjay Y.             [NOTE: Alias — canon: Sanjay Yadav]
+  Address : 12, Gokul Nagar, Mulund West, Mumbai – 400080
+  Phone   : +91-96200-44444
+  Account : BOI-XXXX-6004
+  Role    : Money mule
+
+═══════════════════════════════════════════════════════════════════
+3. DESCRIPTION OF INCIDENT
+═══════════════════════════════════════════════════════════════════
+The complainant Thomas Mathew states that on 30/04/2025 between
+03:10 hours and 04:20 hours, his mobile number (+91-96200-66666)
+went dead. He discovered the next morning that Rs. 4,50,000 had been
+debited from his account via an OTP transaction he did not initiate.
+
+Investigation revealed the funds were transferred to BOI-XXXX-6003
+(A. Tiwari), from where Rs. 2,00,000 was immediately forwarded to
+BOI-XXXX-6004 (Sanjay Y.) within 3 hours. The remainder was withdrawn
+as cash.
+
+Both A. Tiwari and Sanjay Y. appear to be money mules — their accounts
+show no prior transaction history of this size. Both are linked via
+phone records to +91-96200-11111 (I. Khan), receiving 4 calls and
+3 calls respectively in the 72 hours preceding the fraud.
+
+Note: This incident occurred on the same night as FIR 0091 (Kavya Nair).
+The coincidence in timing (02:30–04:30 hours), the amount (Rs. 4,50,000),
+and the involvement of entity Apex Digital Svcs (KOTAK-XXXX-7001) in FIR
+0091 and NextGen Sol. (KOTAK-XXXX-7002) in this case — both sharing a
+registered agent — warrants a consolidated investigation.
+
+All 4 phones of suspects (R001–R004) were co-located at Tower BKC-112
+on 29/04/2025 between 22:00 and 23:30, as per CDR tower records —
+approximately 3 hours before the fraud commenced.
+
+═══════════════════════════════════════════════════════════════════
+4. WITNESSES
+═══════════════════════════════════════════════════════════════════
+1. Bank Officer Sharma (same as FIR 0091)
+2. Telecom service centre (Bandra West branch)
+
+Signature of Complainant : Thomas Mathew
+Signature of IO          : SI Rekha Patil
+Date/Time Recorded       : 05/05/2025 / 14:50 hrs

@@ -1,0 +1,72 @@
+FIRST INFORMATION REPORT
+(Under Section 154 Cr.P.C. / BNSS 2023)
+═══════════════════════════════════════════════════════════════════
+
+FIR No         : MH-0088/2025/0091
+Date of Filing : 02/05/2025
+Time of Filing : 10:15
+Police Station : Bandra Police Station
+District       : Mumbai (Suburban)
+State          : Maharashtra
+Section of BNS : Section 66C, 66D IT Act; Section 420, 468 IPC
+
+═══════════════════════════════════════════════════════════════════
+1. COMPLAINANT DETAILS
+═══════════════════════════════════════════════════════════════════
+Name      : Kavya Nair
+Age       : 34
+Address   : 12, Hill Road Residency, Bandra West, Mumbai – 400050
+Phone     : +91-96200-55555
+Occupation: Software Engineer
+
+═══════════════════════════════════════════════════════════════════
+2. ACCUSED DETAILS
+═══════════════════════════════════════════════════════════════════
+Accused No. 1 (identified from telecom records)
+  Name    : Imraan Khan            [NOTE: Alias — canon: Imran Khan]
+  Address : Under investigation
+  Phone   : +91-96200-11111
+  Account : PNB-XXXX-6001
+
+Accused No. 2
+  Name    : P. Desai
+  Address : 33, Sion Koliwada, Sion, Mumbai – 400022
+  Phone   : +91-96200-22222
+  Role    : SIM swap facilitator (telecom insider, alleged)
+
+═══════════════════════════════════════════════════════════════════
+3. DESCRIPTION OF INCIDENT
+═══════════════════════════════════════════════════════════════════
+The complainant Kavya Nair states that on 30/04/2025 at approximately
+02:30 hours, her mobile number (+91-96200-55555) suddenly stopped
+receiving network signal. She was unable to make or receive calls for
+approximately 4 hours.
+
+Upon visiting the telecom service centre the next morning, she was
+informed that a SIM replacement for her number had been issued the
+previous evening to an individual presenting a forged Aadhaar card
+in her name.
+
+During the period of SIM outage (02:30–06:45 hours on 30/04/2025), the
+following transactions were processed via her bank's mobile OTP system:
+  – Rs. 4,50,000 transferred from complainant's savings account to
+    PNB-XXXX-6001 (linked to mobile +91-96200-11111, subscriber: Imraan Khan)
+  – Rs. 4,50,000 transferred from complainant's FD linked account to
+    KOTAK-XXXX-7001 (entity: Apex Digital Svcs)
+
+The transactions were authenticated via OTPs sent to the cloned SIM
+and are not recognised by the complainant. The timing (02:30–04:00 hours)
+and the recipients (a new account and a services company) are anomalous.
+
+P. Desai is suspected to be an insider at the telecom service centre
+who facilitated the SIM swap without proper verification.
+
+═══════════════════════════════════════════════════════════════════
+4. WITNESSES
+═══════════════════════════════════════════════════════════════════
+1. Telecom service centre manager (identity withheld, statement recorded)
+2. Bank Officer Sharma, Branch Manager, Bandra West branch
+
+Signature of Complainant : Kavya Nair
+Signature of IO          : SI Rekha Patil, Bandra PS
+Date/Time Recorded       : 02/05/2025 / 10:15 hrs

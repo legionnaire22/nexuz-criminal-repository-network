@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CanonicalEntity",
+  "description": "Output schema for Extractor Agent (Agent 1) representing extracted entities and relationships before graph ingestion/resolution",
+  "type": "object",
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "enum": ["sandstorm", "phantom", "mirage"]
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entity_id", "type", "value", "source_doc", "confidence"],
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "Unique identifier for this extraction instance (UUID)"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["Person", "Phone", "Location", "Organization", "Vehicle", "BankAccount"]
+          },
+          "value": {
+            "type": "string",
+            "description": "Extracted string value (name, number, reg number, address, etc.)"
+          },
+          "source_doc": {
+            "type": "string",
+            "description": "Originating filename (e.g. fir_sandstorm_1.txt, cdr_sandstorm.csv, txn_sandstorm.csv)"
+          },
+          "raw_span": {
+            "type": "string",
+            "description": "Original text snippet or context where extracted"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Optional attributes like timestamp, role, bank name, tower coordinates, etc."
+          }
+        }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["relation_type", "source_entity_id", "target_entity_id", "source_doc"],
+        "properties": {
+          "relation_type": {
+            "type": "string",
+            "enum": ["CALLED", "TRANSACTED_WITH", "CO_ACCUSED", "OWNS", "MEMBER_OF", "LOCATED_AT", "ASSOCIATED_WITH"]
+          },
+          "source_entity_id": {
+            "type": "string"
+          },
+          "target_entity_id": {
+            "type": "string"
+          },
+          "source_doc": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "required": ["case_id", "entities", "relations"]
+}

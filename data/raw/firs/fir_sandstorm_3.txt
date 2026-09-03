@@ -1,0 +1,71 @@
+FIRST INFORMATION REPORT
+(Under Section 154 Cr.P.C. / BNSS 2023)
+═══════════════════════════════════════════════════════════════════
+
+FIR No         : MH-0041/2025/0325
+Date of Filing : 18/03/2025
+Time of Filing : 11:20
+Police Station : Dharavi Police Station
+District       : Mumbai (Central)
+State          : Maharashtra
+Section of BNS : Section 3 – Prevention of Money Laundering Act (PMLA);
+                 Section 420 IPC (Cheating)
+
+═══════════════════════════════════════════════════════════════════
+1. COMPLAINANT DETAILS
+═══════════════════════════════════════════════════════════════════
+Name      : Branch Manager, HDFC Bank, Sion Branch
+Address   : HDFC Bank, Plot 22, Sion Circle, Mumbai – 400022
+Phone     : +91-22-2401-1100
+
+═══════════════════════════════════════════════════════════════════
+2. ACCUSED DETAILS
+═══════════════════════════════════════════════════════════════════
+Accused No. 1
+  Name         : Arjun M.           [NOTE: Alias — canon: Arjun Mehta]
+  Account      : HDFC-XXXX-1001
+  Address      : Room 14-B, Kumbharwada Chawl, Dharavi, Mumbai
+  Phone        : +91-98400-11111
+
+Accused No. 2 (Entity)
+  Name         : Phoenix Exp. Pvt Ltd
+  Account      : HDFC-XXXX-1002
+  Registered Address : 11, Indira Industrial Estate, Kurla, Mumbai – 400070
+  Director (stated): Arjun M.
+
+═══════════════════════════════════════════════════════════════════
+3. DESCRIPTION OF INCIDENT
+═══════════════════════════════════════════════════════════════════
+The complainant, Branch Manager of HDFC Bank Sion, reports suspicious
+transaction patterns in accounts linked to one Arjun M. and the corporate
+entity Phoenix Exp. Pvt Ltd.
+
+Between 01/01/2025 and 13/03/2025, account HDFC-XXXX-1001 (held by Arjun M.)
+received 10 cash deposits ranging from Rs. 9,80,000 to Rs. 9,95,000 each.
+These transactions occurred on non-consecutive days and consistently fell
+just below the Rs. 10,00,000 regulatory reporting threshold under the
+Prevention of Money Laundering Act.
+
+Each deposit was followed within 24 hours by a transfer to the corporate
+account HDFC-XXXX-1002, maintained in the name of Phoenix Exp. Pvt Ltd.
+The funds were subsequently transferred to account SBI-XXXX-2001 held by
+one D. Rao (believed to be alias Deepak R.).
+
+The bank did not receive satisfactory documentation for the stated business
+purpose (export commission payments). The account was flagged by the bank's
+automated transaction monitoring system.
+
+Note: Account HDFC-XXXX-1001 is linked to mobile number +91-98400-11111,
+which appears in FIR No. MH-0041/2025/0312 as the primary contact of
+the arrested accused A. Mehta.
+
+═══════════════════════════════════════════════════════════════════
+4. DOCUMENTS ATTACHED
+═══════════════════════════════════════════════════════════════════
+  – Bank statement HDFC-XXXX-1001 (01/01/2025 – 15/03/2025)
+  – Bank statement HDFC-XXXX-1002 (01/01/2025 – 15/03/2025)
+  – STR filed with FIU-IND (Ref: STR-MH-2025-04421)
+
+Signature of Complainant : Branch Manager, HDFC Sion
+Signature of IO          : SI Mohan Deshmukh, Dharavi PS
+Date/Time Recorded       : 18/03/2025 / 11:20 hrs

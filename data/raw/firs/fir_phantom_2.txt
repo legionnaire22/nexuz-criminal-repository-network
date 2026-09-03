@@ -1,0 +1,76 @@
+FIRST INFORMATION REPORT
+(Under Section 154 Cr.P.C. / BNSS 2023)
+═══════════════════════════════════════════════════════════════════
+
+FIR No         : MH-0062/2025/0211
+Date of Filing : 10/04/2025
+Time of Filing : 16:00
+Police Station : Andheri East Police Station
+District       : Mumbai (Suburban)
+State          : Maharashtra
+Section of BNS : FEMA Sections 3, 4; Section 25 PMLA; Section 120-B IPC
+
+═══════════════════════════════════════════════════════════════════
+1. COMPLAINANT DETAILS
+═══════════════════════════════════════════════════════════════════
+Name      : Inspector Sushil Tawde
+Badge No. : MH-EOW-0022
+Unit      : Economic Offences Wing, Mumbai
+Phone     : +91-98400-90003
+
+═══════════════════════════════════════════════════════════════════
+2. ACCUSED DETAILS
+═══════════════════════════════════════════════════════════════════
+Accused No. 1
+  Name    : Vikram S.             [NOTE: Alias — canon: Vikram Sinha]
+  Address : 501 Prestige Tower, Link Road, Malad West, Mumbai – 400064
+  Phone   : +91-97300-11111
+  Account : AXIS-XXXX-4001
+
+Accused No. 2
+  Name    : M. Nambiar
+  Address : 12, Devidas Lane, Borivali West, Mumbai – 400092
+  Phone   : +91-97300-22222
+  Account : AXIS-XXXX-4002
+  Role    : Hawala operator; listed as director of Delta Finance Ltd
+
+Accused No. 3 (Entity)
+  Name    : Delta Finance Ltd (also referred as Delta Finance)
+  Account : YES-XXXX-5001
+  Address : Office 3C, Trade Centre, BKC, Mumbai – 400051
+
+═══════════════════════════════════════════════════════════════════
+3. DESCRIPTION OF INCIDENT
+═══════════════════════════════════════════════════════════════════
+Intelligence inputs obtained by the Economic Offences Wing indicate that
+a hawala network operating under the front of Delta Finance Ltd has been
+routing extortion proceeds out of Mumbai through informal value transfer
+channels.
+
+Analysis of account AXIS-XXXX-4002 (held by M. Nambiar) shows receipt of
+6 transfers of exactly Rs. 5,00,000 and Rs. 10,00,000 between 15/01/2025
+and 05/04/2025, all originating from accounts linked to entities in which
+Vikram S. is a common signatory.
+
+These round-number transfers — all exactly Rs. 5,00,000 or Rs. 10,00,000
+— are inconsistent with legitimate business activity and are consistent
+with hawala settlement patterns observed in prior investigations.
+
+Each incoming transfer was followed within 48 hours by an outward RTGS
+to account YES-XXXX-5001 (Delta Finance Ltd), subsequently disbursed
+in multiple smaller amounts.
+
+The network's Cluster A (Vikram S. and M. Nambiar) has no apparent
+connection to a second network (Cluster B) under separate investigation.
+Cross-reference with EOW file number EOW-2025-B-041 is recommended.
+
+═══════════════════════════════════════════════════════════════════
+4. DOCUMENTS ATTACHED
+═══════════════════════════════════════════════════════════════════
+  – Account statements AXIS-XXXX-4001, AXIS-XXXX-4002, YES-XXXX-5001
+  – STR filed with FIU-IND (Ref: STR-MH-2025-06112)
+  – Subscriber details for +91-97300-11111 and +91-97300-22222
+
+Signature of Complainant : Insp. S. Tawde, EOW
+Signature of IO          : PI Sandeep Rane, Andheri East PS
+Date/Time Recorded       : 10/04/2025 / 16:00 hrs

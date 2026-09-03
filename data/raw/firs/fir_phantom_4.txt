@@ -1,0 +1,76 @@
+FIRST INFORMATION REPORT
+(Under Section 154 Cr.P.C. / BNSS 2023)
+═══════════════════════════════════════════════════════════════════
+
+FIR No         : MH-0062/2025/0244
+Date of Filing : 24/04/2025
+Time of Filing : 18:30
+Police Station : BKC Police Post (Bandra Kurla Complex)
+District       : Mumbai (Suburban)
+State          : Maharashtra
+Section of BNS : Section 3, 4 PMLA; Section 120-B IPC; FEMA
+
+═══════════════════════════════════════════════════════════════════
+1. COMPLAINANT DETAILS
+═══════════════════════════════════════════════════════════════════
+Name      : Inspector Sushil Tawde
+Badge No. : MH-EOW-0022
+Unit      : Economic Offences Wing
+
+═══════════════════════════════════════════════════════════════════
+2. ACCUSED DETAILS
+═══════════════════════════════════════════════════════════════════
+Accused No. 1
+  Name    : A. Krishnan            [NOTE: Alias — canon: Anand Krishnan]
+  Address : Suite 12B, Platina Tower, BKC, Mumbai – 400051
+  Phone   : +91-97300-66666
+  Account : HDFC-XXXX-4003
+  Role    : FINANCIAL BRIDGE — transfers between Cluster A and Cluster B
+
+Accused No. 2
+  Name    : Rohit J.               [NOTE: Alias — canon: Rohit Jain, Cluster B]
+  Address : 8, Manek Nagar, Vile Parle (E), Mumbai – 400057
+  Phone   : +91-97300-77777
+  Account : SBI-XXXX-4004
+
+Accused No. 3 (Entity)
+  Name    : Sigma Holdings (also: Sigma Hold.)
+  Account : YES-XXXX-5002
+  Address : Same as A. Krishnan (Suite 12B, Platina Tower, BKC)
+
+═══════════════════════════════════════════════════════════════════
+3. DESCRIPTION OF INCIDENT
+═══════════════════════════════════════════════════════════════════
+Continuing investigation from FIR 0211 (hawala network, Cluster A) and
+FIR 0229 (courier F. Qureshi), the EOW has identified a financial
+intermediary, one A. Krishnan, who appears to serve as the sole linking
+node between the Vikram S. / M. Nambiar network (Cluster A) and a
+previously unconnected financial fraud operation in the Vile Parle area.
+
+Account HDFC-XXXX-4003 (A. Krishnan) received exactly Rs. 10,00,000 on
+15/03/2025 from YES-XXXX-5001 (Delta Finance Ltd, Cluster A), and within
+24 hours transferred exactly Rs. 10,00,000 to SBI-XXXX-4004 (Rohit J.,
+Cluster B). This same pattern repeated on 01/04/2025 for Rs. 5,00,000.
+
+Without this node, Cluster A and Cluster B would show no documented
+financial connection. A. Krishnan is believed to have no awareness of the
+ultimate criminal nature of either network, though this is contested by
+the IO based on the round-number transfer pattern and timing.
+
+Rohit J. and his associate N. Gupta (Cluster B) are separately under
+investigation under EOW file EOW-2025-B-041.
+
+NOTE TO GRAPH ANALYST: A. Krishnan / +91-97300-66666 / HDFC-XXXX-4003 is
+the bridge between Cluster A and Cluster B. Without graph traversal,
+this link is not visible in any single FIR or account statement.
+
+═══════════════════════════════════════════════════════════════════
+4. DOCUMENTS ATTACHED
+═══════════════════════════════════════════════════════════════════
+  – Account statements HDFC-XXXX-4003 (Jan–Apr 2025)
+  – Wire transfer confirmations (15/03/2025, 01/04/2025)
+  – Subscriber details for +91-97300-66666
+
+Signature of Complainant : Insp. S. Tawde, EOW
+Signature of IO          : PI Sandeep Rane
+Date/Time Recorded       : 24/04/2025 / 18:30 hrs
