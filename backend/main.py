@@ -92,24 +92,28 @@ def health():
 
 @app.post("/api/v1/ingest/fir")
 async def ingest_fir(files: List[UploadFile] = File(...), case_id: str = Form(...)):
-    """Upload and extract entities from one or more FIR documents."""
-    extractor = ExtractorAgent()
+    """Upload and extract entities from one or more FIR documents via Supervisor Orchestrator."""
     total_entities = 0
     total_relations = 0
+    all_plans = []
 
     for file in files:
         content = await file.read()
-        text = content.decode("utf-8", errors="ignore")
-        batch = extractor.extract_from_fir(text=text, filename=file.filename, case_id=case_id)
-        res = ingest_batch_to_agent2(batch, case_id)
-        total_entities += res.get("total_input_entities", 0)
-        total_relations += sum(res.get("edge_counts", {}).values()) if isinstance(res.get("edge_counts"), dict) else 0
+        res = supervisor_agent.supervise_ingestion(
+            source_type="fir",
+            data=content,
+            case_id=case_id,
+            filename=file.filename
+        )
+        total_entities += res.get("entities_extracted", 0)
+        total_relations += res.get("relationships_created", 0)
+        all_plans.extend(res.get("plan_executed", []))
 
     audit_logs.append({
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "user": "Investigator (Badge #4401)",
-        "action": "INGEST_FIR_BATCH",
-        "details": f"Ingested {len(files)} FIR files for case '{case_id}' ({total_entities} entities).",
+        "action": "SUPERVISED_INGEST_FIR_BATCH",
+        "details": f"Supervised ingestion of {len(files)} FIR files for case '{case_id}' ({total_entities} entities).",
         "ip": "127.0.0.1"
     })
 
@@ -118,27 +122,31 @@ async def ingest_fir(files: List[UploadFile] = File(...), case_id: str = Form(..
         "case_id": case_id,
         "files_processed": len(files),
         "entities_extracted": total_entities,
-        "relationships_created": total_relations
+        "relationships_created": total_relations,
+        "orchestration_plan": all_plans,
     }
 
 
 @app.post("/api/v1/ingest/cdr")
 async def ingest_cdr(file: UploadFile = File(...), case_id: str = Form(...)):
-    """Upload and ingest CDR CSV file."""
-    extractor = ExtractorAgent()
+    """Upload and ingest CDR CSV file via Supervisor Orchestrator."""
     content = await file.read()
     lines = content.decode("utf-8", errors="ignore").splitlines()
     reader = csv.DictReader(lines)
     rows = list(reader)
 
-    batch = extractor.extract_from_cdr_rows(rows=rows, filename=file.filename, case_id=case_id)
-    res = ingest_batch_to_agent2(batch, case_id)
+    res = supervisor_agent.supervise_ingestion(
+        source_type="cdr",
+        data=rows,
+        case_id=case_id,
+        filename=file.filename
+    )
 
     audit_logs.append({
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "user": "Investigator (Badge #4401)",
-        "action": "INGEST_CDR_CSV",
-        "details": f"Ingested CDR file '{file.filename}' ({len(rows)} records) for case '{case_id}'.",
+        "action": "SUPERVISED_INGEST_CDR_CSV",
+        "details": f"Supervised ingestion of CDR file '{file.filename}' ({len(rows)} records) for case '{case_id}'.",
         "ip": "127.0.0.1"
     })
 
@@ -146,28 +154,32 @@ async def ingest_cdr(file: UploadFile = File(...), case_id: str = Form(...)):
         "status": "success",
         "case_id": case_id,
         "records_ingested": len(rows),
-        "entities_extracted": res.get("total_input_entities", 0),
-        "relationships_created": sum(res.get("edge_counts", {}).values()) if isinstance(res.get("edge_counts"), dict) else 0,
+        "entities_extracted": res.get("entities_extracted", 0),
+        "relationships_created": res.get("relationships_created", 0),
+        "orchestration_plan": res.get("plan_executed", []),
     }
 
 
 @app.post("/api/v1/ingest/transactions")
 async def ingest_transactions(file: UploadFile = File(...), case_id: str = Form(...)):
-    """Upload and ingest transaction CSV file."""
-    extractor = ExtractorAgent()
+    """Upload and ingest transaction CSV file via Supervisor Orchestrator."""
     content = await file.read()
     lines = content.decode("utf-8", errors="ignore").splitlines()
     reader = csv.DictReader(lines)
     rows = list(reader)
 
-    batch = extractor.extract_from_txn_rows(rows=rows, filename=file.filename, case_id=case_id)
-    res = ingest_batch_to_agent2(batch, case_id)
+    res = supervisor_agent.supervise_ingestion(
+        source_type="txn",
+        data=rows,
+        case_id=case_id,
+        filename=file.filename
+    )
 
     audit_logs.append({
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "user": "Investigator (Badge #4401)",
-        "action": "INGEST_TXN_CSV",
-        "details": f"Ingested Transaction file '{file.filename}' ({len(rows)} records) for case '{case_id}'.",
+        "action": "SUPERVISED_INGEST_TXN_CSV",
+        "details": f"Supervised ingestion of Transaction file '{file.filename}' ({len(rows)} records) for case '{case_id}'.",
         "ip": "127.0.0.1"
     })
 
@@ -175,8 +187,9 @@ async def ingest_transactions(file: UploadFile = File(...), case_id: str = Form(
         "status": "success",
         "case_id": case_id,
         "transactions_ingested": len(rows),
-        "entities_extracted": res.get("total_input_entities", 0),
-        "relationships_created": sum(res.get("edge_counts", {}).values()) if isinstance(res.get("edge_counts"), dict) else 0,
+        "entities_extracted": res.get("entities_extracted", 0),
+        "relationships_created": res.get("relationships_created", 0),
+        "orchestration_plan": res.get("plan_executed", []),
     }
 
 
@@ -289,6 +302,17 @@ def get_alerts(case_id: str):
         "case_id": case_id,
         "total_alerts": len(alerts),
         "alerts": alerts
+    }
+
+
+@app.get("/api/v1/influencers/{case_id}")
+def get_influencers(case_id: str):
+    """Get multi-metric influencer rankings and inferred operational roles."""
+    influencers = analyst_agent.rank_key_influencers(case_id)
+    return {
+        "case_id": case_id,
+        "total_influencers": len(influencers),
+        "influencers": influencers
     }
 
 

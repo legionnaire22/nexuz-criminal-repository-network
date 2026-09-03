@@ -222,6 +222,64 @@ class Layer1RuleDetector:
                 break
         return alerts
 
+    def detect_circular_layering(self, df_txns: pd.DataFrame, case_id: str) -> List[AnomalyAlert]:
+        """
+        Detects circular money laundering cycles (Hawala rings / layering loops):
+        Account A -> Account B -> Account C -> Account A within short time windows.
+        """
+        alerts = []
+        if df_txns.empty or len(df_txns) < 3 or not NETWORKX_AVAILABLE:
+            return alerts
+
+        import networkx as nx
+        DG = nx.DiGraph()
+        edge_data = {}
+
+        for _, r in df_txns.iterrows():
+            u = str(r["sender_account"]).strip()
+            v = str(r["receiver_account"]).strip()
+            amt = float(r.get("amount_inr", 0))
+            ts = str(r.get("timestamp", ""))
+            DG.add_edge(u, v, amount=amt, timestamp=ts)
+            edge_data[(u, v)] = (amt, ts, str(r.get("sender_name", "")), str(r.get("receiver_name", "")))
+
+        try:
+            cycles = list(nx.simple_cycles(DG))
+            for cycle in cycles:
+                if 3 <= len(cycle) <= 6:
+                    cycle_edges = []
+                    total_vol = 0.0
+                    for i in range(len(cycle)):
+                        src = cycle[i]
+                        dst = cycle[(i + 1) % len(cycle)]
+                        amt, ts, s_name, r_name = edge_data.get((src, dst), (0, "", "", ""))
+                        total_vol += amt
+                        cycle_edges.append(f"{src} ({s_name}) → {dst} (₹{amt:,.0f})")
+
+                    alerts.append(AnomalyAlert(
+                        alert_id="ANO-008",
+                        severity="CRITICAL",
+                        layer="Layer 5 (Graph Directed Cycle Analysis)",
+                        title=f"Circular Hawala Money-Laundering Ring ({len(cycle)}-Hop Loop)",
+                        description=(
+                            f"Identified closed circular financial transaction loop across {len(cycle)} accounts "
+                            f"totaling ₹{total_vol:,.2f}. Flow: {' ➔ '.join(cycle)} ➔ {cycle[0]}."
+                        ),
+                        involved_entities=cycle,
+                        timestamp=None,
+                        metadata={
+                            "cycle_length": len(cycle),
+                            "accounts": cycle,
+                            "flow_summary": " ➔ ".join(cycle_edges),
+                            "total_recycled_inr": total_vol
+                        }
+                    ))
+                    break  # Retain primary significant cycle
+        except Exception:
+            pass
+
+        return alerts
+
 
 # ===========================================================================
 # 3. LAYER 2: STATISTICAL DETECTOR (CDR Z-SCORE BURST DETECTION)
@@ -419,6 +477,7 @@ class AnalystAgent:
         alerts.extend(self.layer1.detect_hawala(df_txns, case_id))
         alerts.extend(self.layer1.detect_rapid_expansion(df_cdrs, case_id))
         alerts.extend(self.layer1.detect_sim_cluster(df_cdrs, case_id))
+        alerts.extend(self.layer1.detect_circular_layering(df_txns, case_id))
 
         # Layer 2: Statistical Z-Score
         alerts.extend(self.layer2.detect_burst_coordination(df_cdrs, case_id))
@@ -464,6 +523,14 @@ class AnalystAgent:
                 title="Rapid Network Expansion",
                 description="Primary phone +91-98400-11111 initiated contact with 4 new unknown numbers within 24 hours.",
                 involved_entities=["+91-98400-11111"],
+            ))
+            alerts.append(AnomalyAlert(
+                alert_id="ANO-008",
+                severity="CRITICAL",
+                layer="Layer 5 (Graph Directed Cycle Analysis)",
+                title="Circular Hawala Money-Laundering Ring (3-Hop Loop)",
+                description="Closed laundering cycle detected between HDFC-XXXX-1001, HDFC-XXXX-1002, and Phoenix Exports.",
+                involved_entities=["HDFC-XXXX-1001", "HDFC-XXXX-1002", "P001"],
             ))
         elif case_id == "phantom":
             alerts.append(AnomalyAlert(
@@ -567,6 +634,81 @@ class AnalystAgent:
                 highlighted_subgraph={"node_ids": [e for a in relevant_alerts for e in a.involved_entities][:8], "edge_ids": []},
                 confidence_score=0.92
             )
+
+    def rank_key_influencers(self, case_id: str) -> List[Dict[str, Any]]:
+        """
+        Calculates multi-metric graph centrality and classifies network roles:
+        - Kingpin (High PageRank + High Authority)
+        - Strategic Broker / Cut-Out Bridge (High Betweenness Centrality)
+        - Logistics / Operational Hub (High Degree Centrality)
+        - Peripheral Mule / Associate (Pass-through accounts / transient calls)
+        """
+        if not NETWORKX_AVAILABLE:
+            return []
+
+        import networkx as nx
+        df_txns = _load_case_txns(case_id)
+        df_cdrs = _load_case_cdrs(case_id)
+
+        G = nx.Graph()
+        for _, r in df_cdrs.iterrows():
+            G.add_edge(str(r["caller_msisdn"]), str(r["callee_msisdn"]), weight=1.0)
+        for _, r in df_txns.iterrows():
+            s = str(r["sender_name"]) if pd.notna(r["sender_name"]) else str(r["sender_account"])
+            rc = str(r["receiver_name"]) if pd.notna(r["receiver_name"]) else str(r["receiver_account"])
+            G.add_edge(s, rc, weight=2.0)
+
+        # Supplement with in-memory graph nodes if G is small
+        if len(G) < 5 and db_client.in_memory_edges:
+            for e in db_client.in_memory_edges:
+                G.add_edge(e["source"], e["target"], weight=1.0)
+
+        if len(G) == 0:
+            return []
+
+        try:
+            pagerank = nx.pagerank(G, alpha=0.85, max_iter=50)
+            if len(G) > 200:
+                betweenness = nx.betweenness_centrality(G, k=30, seed=42)
+            else:
+                betweenness = nx.betweenness_centrality(G)
+            degree = dict(G.degree())
+
+            influencers = []
+            for node in G.nodes():
+                pr = pagerank.get(node, 0.0)
+                bw = betweenness.get(node, 0.0)
+                deg = degree.get(node, 0)
+
+                # Automated Law Enforcement Role Classification
+                if pr >= 0.06 and bw < 0.20:
+                    inferred_role = "Syndicate Kingpin / Mastermind"
+                    threat_level = "CRITICAL"
+                elif bw >= 0.08:
+                    inferred_role = "Strategic Broker / Cut-Out Bridge"
+                    threat_level = "CRITICAL"
+                elif deg >= 4:
+                    inferred_role = "Logistics / Operational Hub"
+                    threat_level = "HIGH"
+                else:
+                    inferred_role = "Peripheral Mule / Associate"
+                    threat_level = "MEDIUM"
+
+                risk = min((pr * 3.5) + (bw * 3.0) + (deg * 0.04), 0.99)
+                influencers.append({
+                    "entity": node,
+                    "pagerank": round(pr, 4),
+                    "betweenness": round(bw, 4),
+                    "degree": deg,
+                    "inferred_role": inferred_role,
+                    "threat_level": threat_level,
+                    "composite_risk_score": round(risk, 2)
+                })
+
+            influencers.sort(key=lambda x: x["composite_risk_score"], reverse=True)
+            return influencers
+        except Exception as e:
+            return []
 
 
 # Global singleton instance

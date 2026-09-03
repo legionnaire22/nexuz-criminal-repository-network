@@ -65,6 +65,7 @@ from agents.graph_builder import (
     run_agent2_pipeline,
     agent2_node,
     get_pending_candidates,
+    ingest_batch_to_agent2,
 )
 from agents.analyst import analyst_agent
 from db.neo4j_client import db_client
@@ -322,6 +323,58 @@ class SupervisorAgent:
         self.graph_builder = graph_builder_agent
         self.analyst = analyst_agent
         self.graph = orchestrator_graph
+
+    def supervise_ingestion(self, source_type: str, data: Any, case_id: str, filename: str = "") -> Dict[str, Any]:
+        """
+        Apex Orchestration: Supervises the end-to-end Ingestion and Graph Construction lifecycle:
+        1. Dispatches parsing to Agent 1 (Extractor)
+        2. Routes canonical batches to Agent 2 (Graph Builder & Resolver)
+        3. Coordinates with Agent 3 (Analyst) to trigger threat and anomaly detection
+        """
+        logger.info(f"[Supervisor] Supervising ingestion of {source_type} ({filename}) for case '{case_id}'")
+        plan_steps = [f"Supervisor.start_ingestion({source_type}, '{filename}')"]
+
+        # Step 1: Agent 1 Extraction
+        if source_type == "fir":
+            if isinstance(data, (bytes, bytearray)):
+                batch = self.extractor.extract_from_fir_file(data, filename=filename, case_id=case_id)
+            else:
+                batch = self.extractor.extract_from_fir(text=str(data), filename=filename, case_id=case_id)
+        elif source_type == "cdr":
+            batch = self.extractor.extract_from_cdr_rows(rows=data, filename=filename, case_id=case_id)
+        elif source_type in ("txn", "transactions"):
+            batch = self.extractor.extract_from_txn_rows(rows=data, filename=filename, case_id=case_id)
+        else:
+            raise ValueError(f"Unknown source_type: {source_type}")
+
+        plan_steps.append(f"Agent1_Extractor.extract() -> {len(batch.entities)} entities, {len(batch.relations)} relations")
+
+        # Step 2: Agent 2 Graph Resolution & Persistence
+        res = ingest_batch_to_agent2(batch, case_id=case_id, sync_to_neo4j=True)
+        resolved_count = res.get("total_resolved_entities", len(batch.entities))
+        edge_counts = res.get("edge_counts", {})
+        total_edges = sum(edge_counts.values()) if isinstance(edge_counts, dict) else 0
+
+        plan_steps.append(f"Agent2_Resolver.resolve_and_build() -> {resolved_count} canonical nodes, {total_edges} edges")
+
+        # Step 3: Trigger Agent 3 Anomaly Detection
+        try:
+            alerts = self.analyst.detect_anomalies(case_id)
+            plan_steps.append(f"Agent3_Analyst.detect_anomalies() -> {len(alerts)} alerts indexed")
+        except Exception as e:
+            alerts = []
+            plan_steps.append(f"Agent3_Analyst.detect_anomalies() -> Skipped ({e})")
+
+        return {
+            "status": "success",
+            "case_id": case_id,
+            "filename": filename,
+            "plan_executed": plan_steps,
+            "entities_extracted": len(batch.entities),
+            "canonical_nodes_resolved": resolved_count,
+            "relationships_created": total_edges,
+            "active_alerts_count": len(alerts),
+        }
 
     def process_query(self, req: QueryRequest) -> QueryResponse:
         """Route query through compiled LangGraph multi-agent execution pipeline."""

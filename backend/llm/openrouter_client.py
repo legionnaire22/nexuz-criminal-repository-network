@@ -5,6 +5,7 @@ and error handling.
 """
 
 import os
+import re
 import json
 import requests
 from typing import Dict, Any, Optional

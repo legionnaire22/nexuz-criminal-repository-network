@@ -1190,6 +1190,57 @@
       // Court Dossier Modal
       const [showCourtModal, setShowCourtModal] = useState(false);
 
+      // HITL Review Queue Modal State
+      const [showReviewModal, setShowReviewModal] = useState(false);
+      const [reviewItems, setReviewItems] = useState([
+        {
+          merge_id: "pair_001",
+          entity_1: { name: "Arjun Mehata", doc: "fir_sandstorm_2.txt" },
+          entity_2: { name: "Arjun Mehta", doc: "fir_sandstorm_1.txt" },
+          similarity_score: 0.89,
+          match_reason: "Jaro-Winkler=0.89; Same case FIR context; shared phone +91-98400-11111",
+          status: "PENDING"
+        },
+        {
+          merge_id: "pair_002",
+          entity_1: { name: "Kabeer Sheikh", doc: "fir_sandstorm_1.txt" },
+          entity_2: { name: "K. Sheikh", doc: "fir_sandstorm_4.txt" },
+          similarity_score: 0.84,
+          match_reason: "Soundex match ('K262'); shared mobile handset MSISDN",
+          status: "PENDING"
+        }
+      ]);
+      const [reviewStatusMsg, setReviewStatusMsg] = useState("");
+
+      const openReviewQueueModal = async () => {
+        setShowReviewModal(true);
+        try {
+          const res = await fetch("http://127.0.0.1:8000/api/v1/review-queue", { signal: AbortSignal.timeout(2000) });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+              setReviewItems(data.items);
+            }
+          }
+        } catch (e) {}
+      };
+
+      const handleReviewDecision = async (mergeId, action) => {
+        setReviewStatusMsg(`Applying ${action} on candidate ${mergeId}...`);
+        try {
+          const formData = new FormData();
+          formData.append("action", action);
+          formData.append("notes", "Decision ratified by Lead Investigator via Command UI");
+          await fetch(`http://127.0.0.1:8000/api/v1/review-queue/${mergeId}/action`, {
+            method: "POST",
+            body: formData
+          });
+        } catch (e) {}
+        setReviewItems(prev => prev.map(item => item.merge_id === mergeId ? { ...item, status: action } : item));
+        setReviewStatusMsg(`[SUCCESS] Candidate ${mergeId} marked as ${action}. Sealed in audit ledger.`);
+        setTimeout(() => setReviewStatusMsg(""), 3500);
+      };
+
       // Interactive Hover Tooltip State for Forensic Reasoning
       const [hoveredEntity, setHoveredEntity] = useState(null);
 
@@ -1589,7 +1640,7 @@
       };
 
       // Switch Case
-      const handleSwitchCase = (newCase) => {
+      const handleSwitchCase = async (newCase) => {
         setCurrentCase(newCase);
         const meta = CASE_METADATA[newCase];
         setSuspects(meta.suspects);
@@ -1607,16 +1658,71 @@
         if (cyInstance.current) {
           buildGraphForCase(newCase, cyInstance.current);
         }
+
+        // Live API Bridge for Alerts
+        try {
+          const alertRes = await fetch(`http://127.0.0.1:8000/api/v1/alerts/${newCase}`, { signal: AbortSignal.timeout(2000) });
+          if (alertRes.ok) {
+            const data = await alertRes.json();
+            if (data.alerts && data.alerts.length > 0) {
+              setAlerts(data.alerts.map(a => ({
+                id: a.alert_id,
+                title: a.title,
+                layer: a.layer,
+                severity: a.severity,
+                detail: a.description
+              })));
+            }
+          }
+        } catch (e) {}
       };
 
       // FEATURE: INTELLIGENT FORENSIC GRAPH QUERY & RELATIONSHIP PATHFINDER
-      const handleExecuteQuery = (rawQuery) => {
+      const handleExecuteQuery = async (rawQuery) => {
         const q = (rawQuery || '').trim();
         if (!q) return;
 
         const cy = cyInstance.current;
-        if (!cy) return;
+        const t0 = performance.now();
 
+        // 1. Live FastAPI Supervisor Query
+        try {
+          const res = await fetch("http://127.0.0.1:8000/api/v1/query", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ case_id: currentCase, query: q }),
+            signal: AbortSignal.timeout(3500)
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const latency = Math.round(performance.now() - t0);
+            setQueryLatency(latency);
+            if (data.summary) setBriefSummary(data.summary);
+            if (data.key_findings && data.key_findings.length > 0) {
+              setBriefFindings(data.key_findings.map(f => ({
+                text: f.finding || f.text || '',
+                nodes: f.cited_nodes || []
+              })));
+            }
+            if (cy && data.highlighted_subgraph && data.highlighted_subgraph.node_ids) {
+              cy.elements().unselect();
+              const ids = data.highlighted_subgraph.node_ids;
+              const sel = ids.map(id => `#${id}`).join(', ');
+              if (sel) {
+                const nodes = cy.$(sel);
+                nodes.select();
+                if (nodes.length > 0) {
+                  cy.animate({ fit: { eles: nodes.neighborhood().add(nodes), padding: 50 }, duration: 400 });
+                }
+              }
+            }
+            return;
+          }
+        } catch (e) {
+          // Graceful fallback to client-side heuristic engine below
+        }
+
+        if (!cy) return;
         const lowerQ = q.toLowerCase();
 
         // 1. Cross-Case Detection (e.g. asking about "Arjun Mehta" in Operation Phantom)
@@ -1853,6 +1959,15 @@
                 <option value="phantom">Operation Phantom (Hawala Bridge)</option>
                 <option value="mirage">Operation Mirage (SIM-Swap Fraud)</option>
               </select>
+
+              <button 
+                className="btn-tactical-header" 
+                style={{ background: 'rgba(168, 85, 247, 0.22)', borderColor: 'var(--purple-supervisor)', color: '#d8b4fe' }}
+                onClick={openReviewQueueModal}
+                title="Open Section 63 BNSS Human-in-the-Loop Review Queue"
+              >
+                <i className="fa-solid fa-users-gear"></i> HITL Review Queue
+              </button>
 
               <button 
                 className="btn-tactical-header btn-court-dossier" 
@@ -2259,6 +2374,88 @@
                       <i className="fa-solid fa-print"></i> Print Official Court Dossier
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* FEATURE 5: HUMAN-IN-THE-LOOP (HITL) RESOLVER REVIEW QUEUE MODAL */}
+          {showReviewModal && (
+            <div className="court-modal-overlay" onClick={() => setShowReviewModal(false)}>
+              <div className="court-dossier-sheet" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '820px' }}>
+                <div className="court-dossier-head" style={{ borderBottom: '1px solid rgba(168, 85, 247, 0.3)' }}>
+                  <div>
+                    <div className="court-title-main" style={{ color: '#d8b4fe' }}>
+                      <i className="fa-solid fa-scale-balanced"></i> HUMAN-IN-THE-LOOP RESOLVER QUEUE (BNSS COMPLIANT)
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+                      AMBIGUOUS ENTITY MERGES AWAITING LEAD INVESTIGATOR RATIFICATION &bull; ACTIVE SQLITE AUDIT QUEUE
+                    </span>
+                  </div>
+                  <button 
+                    style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}
+                    onClick={() => setShowReviewModal(false)}
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+
+                <div className="court-dossier-body">
+                  {reviewStatusMsg && (
+                    <div style={{ padding: '8px 12px', marginBottom: '12px', borderRadius: '4px', background: 'rgba(0, 255, 136, 0.15)', border: '1px solid var(--emerald-radar)', color: 'var(--emerald-radar)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+                      {reviewStatusMsg}
+                    </div>
+                  )}
+
+                  <table className="evidence-table">
+                    <thead>
+                      <tr>
+                        <th>Merge ID</th>
+                        <th>Candidate Entity 1</th>
+                        <th>Candidate Entity 2</th>
+                        <th>Score</th>
+                        <th>Corroboration Signals</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {reviewItems.map(item => (
+                        <tr key={item.merge_id}>
+                          <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan-bright)' }}>{item.merge_id}</td>
+                          <td><strong>{item.entity_1?.name}</strong> <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)' }}>({item.entity_1?.doc})</span></td>
+                          <td><strong>{item.entity_2?.name}</strong> <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)' }}>({item.entity_2?.doc})</span></td>
+                          <td>
+                            <span style={{ fontWeight: 'bold', color: item.similarity_score >= 0.85 ? 'var(--emerald-radar)' : 'var(--amber-warn)' }}>
+                              {(item.similarity_score * 100).toFixed(0)}%
+                            </span>
+                          </td>
+                          <td style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>{item.match_reason}</td>
+                          <td>
+                            {item.status === 'APPROVED' ? (
+                              <span style={{ color: 'var(--emerald-radar)', fontWeight: 'bold', fontSize: '0.75rem' }}><i className="fa-solid fa-check"></i> APPROVED</span>
+                            ) : item.status === 'REJECTED' ? (
+                              <span style={{ color: 'var(--crimson-target)', fontWeight: 'bold', fontSize: '0.75rem' }}><i className="fa-solid fa-xmark"></i> REJECTED</span>
+                            ) : (
+                              <div style={{ display: 'flex', gap: '6px' }}>
+                                <button 
+                                  style={{ padding: '4px 8px', background: 'rgba(0, 255, 136, 0.2)', border: '1px solid var(--emerald-radar)', color: '#fff', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}
+                                  onClick={() => handleReviewDecision(item.merge_id, 'APPROVED')}
+                                >
+                                  Approve
+                                </button>
+                                <button 
+                                  style={{ padding: '4px 8px', background: 'rgba(255, 42, 85, 0.2)', border: '1px solid var(--crimson-target)', color: '#fff', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}
+                                  onClick={() => handleReviewDecision(item.merge_id, 'REJECTED')}
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>

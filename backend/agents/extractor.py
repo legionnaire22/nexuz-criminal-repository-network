@@ -8,10 +8,17 @@ Multi-tier hybrid extraction pipeline:
 """
 
 import re
+import io
 import uuid
 from typing import List, Dict, Any, Tuple, Optional
 from schemas.canonical import ExtractedEntity, ExtractedRelation, IngestionBatch
 from llm.openrouter_client import llm_client
+
+try:
+    import pypdf
+    PYPDF_AVAILABLE = True
+except ImportError:
+    PYPDF_AVAILABLE = False
 
 # ── High-Precision Regular Expressions ───────────────────────────────────────
 PHONE_REGEX = re.compile(r"\+91-[0-9]{5}-[0-9]{5}")
@@ -25,6 +32,17 @@ NAME_FIELD_REGEX = re.compile(r"Name\s*:\s*([^\n\r]+)")
 PHONE_FIELD_REGEX = re.compile(r"Phone\s*:\s*(\+91-[0-9]{5}-[0-9]{5})")
 ROLE_FIELD_REGEX = re.compile(r"Role\s*:\s*([^\n\r]+)")
 ALIAS_REGEX = re.compile(r"\[NOTE:\s*Alias\s*—\s*canon:\s*([^\]]+)\]", re.IGNORECASE)
+
+# Dynamic Organization extraction pattern
+DYNAMIC_ORG_REGEX = re.compile(
+    r"\b([A-Z][a-zA-Z0-9&'\.\s]{2,30}\s+(?:Pvt\.?\s*Ltd\.?|Ltd\.?|Limited|Trading(?:\s*Co\.?)?|Traders|Exports|Holdings|Solutions|Finance|Enterprises|Logistics|Services|Svcs|Digital))\b"
+)
+
+# Key Location & Urban Jurisdictions
+LOCATION_REGEX = re.compile(
+    r"\b([A-Z][a-zA-Z\s]+(?:Police Station|Junction|Chawl|Nagar|Road|Sector|Phase|Plot|Dharavi|Andheri|Sion|Bandra|Kurla|Colaba))\b",
+    re.IGNORECASE
+)
 
 KNOWN_ORGS = [
     "Phoenix Exports Pvt Ltd", "Phoenix Exports", "Phoenix Exp. Pvt Ltd", "Phoenix Exp.",
@@ -88,10 +106,20 @@ class ExtractorAgent:
         for tower in TOWER_REGEX.findall(text):
             add_entity("Location", tower, span=f"Tower {tower}", conf=1.0, meta={"is_tower": True})
 
-        # 5. Organizations & Shell Companies
+        for loc in LOCATION_REGEX.findall(text):
+            cleaned_loc = loc.strip()
+            if len(cleaned_loc) > 3 and not any(k in cleaned_loc.lower() for k in ("section", "police station")):
+                add_entity("Location", cleaned_loc, span=cleaned_loc, conf=0.90)
+
+        # 5. Organizations & Shell Companies (Static + Dynamic Regex)
         for org in KNOWN_ORGS:
             if org in text:
                 add_entity("Organization", org, span=org, conf=0.98, meta={"is_front": True})
+
+        for d_org in DYNAMIC_ORG_REGEX.findall(text):
+            cleaned_d_org = d_org.strip()
+            if len(cleaned_d_org) > 4:
+                add_entity("Organization", cleaned_d_org, span=cleaned_d_org, conf=0.92)
 
         # 6. Parse Structured Accused Blocks
         accused_blocks = ACCUSED_BLOCK_REGEX.findall(text)
@@ -225,6 +253,33 @@ Return STRICTLY valid JSON adhering to this schema:
                             ))
 
         return IngestionBatch(case_id=case_id, entities=entities, relations=relations)
+
+    def extract_from_fir_file(self, content_bytes: bytes, filename: str, case_id: str) -> IngestionBatch:
+        """
+        Ingests FIR from either raw text or PDF bytes.
+        Automatically extracts text streams from PDF files before passing to the extraction pipeline.
+        """
+        text = ""
+        if filename.lower().endswith(".pdf"):
+            if PYPDF_AVAILABLE:
+                try:
+                    reader = pypdf.PdfReader(io.BytesIO(content_bytes))
+                    text = "\n".join(page.extract_text() or "" for page in reader.pages)
+                except Exception:
+                    pass
+            if not text:
+                # Direct ASCII stream fallback for PDF files
+                try:
+                    text = content_bytes.decode("latin-1", errors="ignore")
+                    text_matches = re.findall(r"\(([\w\s\-\.,:;/]+)\)", text)
+                    if text_matches:
+                        text = " ".join(text_matches)
+                except Exception:
+                    text = content_bytes.decode("utf-8", errors="ignore")
+        else:
+            text = content_bytes.decode("utf-8", errors="ignore")
+
+        return self.extract_from_fir(text=text, filename=filename, case_id=case_id)
 
     def extract_from_cdr_rows(self, rows: List[Dict[str, Any]], filename: str, case_id: str) -> IngestionBatch:
         """Extract phones, locations, and call relations from CDR rows."""

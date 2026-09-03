@@ -54,6 +54,21 @@ def test_query():
     assert len(data["key_findings"]) > 0
     print("[OK] POST /api/v1/query generated retrieval-grounded brief citing node IDs")
 
+def test_influencers():
+    res = client.get("/api/v1/influencers/sandstorm")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["total_influencers"] > 0
+    top = data["influencers"][0]
+    assert "inferred_role" in top
+    print(f"[OK] GET /api/v1/influencers/sandstorm returned {data['total_influencers']} influencers (Top: {top['entity']} as {top['inferred_role']})")
+
+def test_bfs_shortest_path():
+    from db.neo4j_client import db_client
+    path = db_client.shortest_path("A. Mehta", "Deepak R.")
+    assert len(path.get("path_nodes", [])) >= 2
+    print(f"[OK] db_client.shortest_path('A. Mehta', 'Deepak R.') resolved {len(path['path_nodes'])} nodes via in-memory BFS!")
+
 def test_audit_log():
     res = client.get("/api/v1/audit-log")
     assert res.status_code == 200
@@ -66,6 +81,8 @@ if __name__ == "__main__":
     test_root()
     test_seed_and_graph()
     test_alerts()
+    test_influencers()
+    test_bfs_shortest_path()
     test_review_queue()
     test_query()
     test_audit_log()
