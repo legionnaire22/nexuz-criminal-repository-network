@@ -321,13 +321,27 @@ export function GraphCanvas({
           }
         },
         {
-          selector: 'edge[color = "#ff2a55"], edge[color = "#ffb800"], edge[color = "#a855f7"]',
+          selector: 'edge[color = "#ff2a55"], edge[color = "#ffb800"], edge[color = "#a855f7"], edge[color = "#00f0ff"], edge[color = "#ff7b95"], edge[color = "#94a3b8"]',
           style: {
-            'width': 4.5,
+            'width': 3.5,
             'line-color': 'data(color)',
             'target-arrow-color': 'data(color)',
             'target-arrow-shape': 'triangle',
-            'arrow-scale': 1.15,
+            'arrow-scale': 1.45,
+            'label': 'data(rel_label)',
+            'font-size': '10px',
+            'font-family': 'JetBrains Mono, Menlo, monospace',
+            'font-weight': '700',
+            'color': '#ffffff',
+            'text-background-color': '#060a12',
+            'text-background-opacity': 0.96,
+            'text-background-padding': '4px',
+            'text-background-shape': 'roundrectangle',
+            'text-border-color': 'data(color)',
+            'text-border-width': 1,
+            'text-border-opacity': 0.9,
+            'text-rotation': 'autorotate',
+            'curve-style': 'bezier',
             'opacity': 1.0,
             'z-index': 80
           }
@@ -337,7 +351,7 @@ export function GraphCanvas({
           style: {
             'line-color': '#ff2a55',
             'line-style': 'dashed',
-            'width': 3,
+            'width': 3.5,
             'opacity': 0.95,
             'z-index': 95
           }
@@ -353,11 +367,14 @@ export function GraphCanvas({
         {
           selector: 'edge:hover',
           style: {
-            'width': 4,
+            'width': 4.5,
             'opacity': 1.0,
             'line-color': '#00f0ff',
             'target-arrow-color': '#00f0ff',
-            'target-arrow-shape': 'triangle'
+            'target-arrow-shape': 'triangle',
+            'text-border-color': '#00f0ff',
+            'text-border-width': 1.5,
+            'z-index': 100
           }
         },
         {
@@ -386,7 +403,8 @@ export function GraphCanvas({
             'line-color': '#334155',
             'width': 1.2,
             'opacity': 0.35,
-            'target-arrow-shape': 'none'
+            'target-arrow-shape': 'none',
+            'label': ''
           }
         }
       ],
@@ -401,23 +419,23 @@ export function GraphCanvas({
       if (isNode) {
         const nodeType = target.data('type');
         const displayType = !analyzed 
-          ? 'Raw Ingested Record (Pending Analysis)' 
+          ? 'Raw Ingested Record (Pending Scan)' 
           : nodeType === 'target' 
-            ? 'Prime Suspect (Human Accused)' 
+            ? 'Prime Suspect (Core Syndicate)' 
             : nodeType === 'broker' 
-              ? 'Covert Bridge / Facilitator' 
+              ? 'Covert Bridge / Structural Broker' 
               : nodeType === 'vehicle'
-                ? 'Seized Transport Asset (Vehicle)'
+                ? 'Seized Logistics Asset (Vehicle)'
                 : nodeType === 'account'
-                  ? 'Flagged Mule Account (Banking)'
+                  ? 'Flagged Financial Mule Account'
                   : nodeType === 'organization'
-                    ? 'Corporate Shell Conduit (Entity)'
+                    ? 'Corporate Shell Conduit Entity'
                     : nodeType === 'phone'
-                      ? 'Monitored Telecom Endpoint (SIM)'
+                      ? 'Monitored Telecom MSISDN (Burner)'
                       : (nodeType === 'tower' || nodeType === 'location')
-                        ? 'Cellular BTS Location Tower'
+                        ? 'Cellular BTS Geo-Location Tower'
                         : nodeType === 'cleared' 
-                          ? 'Cleared Citizen / Witness' 
+                          ? 'Cleared Citizen / Bona Fide Witness' 
                           : nodeType === 'noise' 
                             ? 'Ambient Signal Noise' 
                             : 'Corroborated Forensic Node';
@@ -432,26 +450,51 @@ export function GraphCanvas({
                 ? 'score-cleared'
                 : 'score-analyzed';
 
+        // Extract connected links to explain the relational nexus clearly
+        const connections = [];
+        if (analyzed && target.connectedEdges) {
+          const cEdges = target.connectedEdges();
+          cEdges.forEach(e => {
+            if (e.data('color') === '#475569') return; // skip noise
+            const isSource = e.source().id() === target.id();
+            const other = isSource ? e.target() : e.source();
+            const relLabel = e.data('rel_label') || e.data('rel_type') || 'CONNECTED';
+            connections.push({
+              dir: isSource ? '➔ OUTFLOW' : '⬅ INFLOW',
+              rel: relLabel,
+              otherName: other.data('label') || other.id(),
+              otherIcon: other.data('icon') || '🔹',
+              color: e.data('color') || 'var(--cyan-bright)'
+            });
+          });
+        }
+
         setHoveredEntity({
           isNode: true,
+          icon: target.data('icon') || '🔹',
           title: target.data('label') || target.id(),
           type: displayType,
           badgeClass: badgeClass,
-          reason: target.data('reason') || 'Canonical entity record participating in investigation.',
-          doc: target.data('doc') || 'fir_sandstorm_1.txt',
-          metric: !analyzed ? 'Awaiting Pipeline Scan' : (target.data('metric') || 'Verified Forensic Hub'),
-          x: Math.min(Math.max(15, pos.x + 18), rect.width - 330),
-          y: Math.min(Math.max(65, pos.y - 40), rect.height - 190)
+          reason: target.data('reason') || 'Canonical entity record participating in multi-agent investigation.',
+          doc: target.data('doc') || 'FIR / CDR Database',
+          metric: !analyzed ? 'Awaiting AI Graph Scan' : (target.data('metric') || 'Verified Forensic Node'),
+          connections: connections.slice(0, 4),
+          x: Math.min(Math.max(15, pos.x + 18), rect.width - 390),
+          y: Math.min(Math.max(65, pos.y - 70), rect.height - 290)
         });
       } else {
-        const src = target.source().data('label') || target.data('source');
-        const tgt = target.target().data('label') || target.data('target');
-        const edgeRel = target.data('rel_type') || 'CONNECTED';
+        const srcNode = target.source();
+        const tgtNode = target.target();
+        const src = srcNode.data('label') || target.data('source');
+        const tgt = tgtNode.data('label') || target.data('target');
+        const srcIcon = srcNode.data('icon') || '🔹';
+        const tgtIcon = tgtNode.data('icon') || '🔹';
+        const edgeRel = target.data('rel_label') || target.data('rel_type') || 'CONNECTED';
         const edgeColor = target.data('color');
 
         const displayType = !analyzed
           ? 'Raw Signal Link (Pending Analysis)'
-          : edgeRel;
+          : (target.data('rel_type') || 'FORENSIC LINK');
 
         const badgeClass = !analyzed
           ? 'score-pending'
@@ -463,14 +506,16 @@ export function GraphCanvas({
 
         setHoveredEntity({
           isNode: false,
-          title: `${edgeRel}: ${src} → ${tgt}`,
+          icon: '⚡',
+          title: `${srcIcon} ${src} ➔ ${tgtIcon} ${tgt}`,
+          relLabel: edgeRel,
           type: displayType,
           badgeClass: badgeClass,
-          reason: target.data('reason') || 'Forensic financial/telecom connection between nodes.',
-          doc: target.data('doc') || 'txn_sandstorm.csv',
-          metric: !analyzed ? 'Awaiting Pipeline Scan' : (target.data('metric') || 'Verified Forensic Edge'),
-          x: Math.min(Math.max(15, pos.x + 18), rect.width - 330),
-          y: Math.min(Math.max(65, pos.y - 40), rect.height - 190)
+          reason: target.data('reason') || 'Forensic financial/telecom connection corroborated between endpoints.',
+          doc: target.data('doc') || 'Bank / CDR Exhibit Ledger',
+          metric: !analyzed ? 'Awaiting Pipeline Scan' : (target.data('metric') || 'Verified Forensic Arrow'),
+          x: Math.min(Math.max(15, pos.x + 18), rect.width - 390),
+          y: Math.min(Math.max(65, pos.y - 70), rect.height - 260)
         });
       }
     };
@@ -562,13 +607,16 @@ export function GraphCanvas({
       });
 
       // 4. Highlight verified syndicate crime edges with prominent arrows
+      // 4. Highlight verified syndicate crime edges with prominent arrows & relation badges
       const crimeEdges = cy.edges().difference(noiseEdges);
       crimeEdges.style({
         'opacity': 1.0,
-        'width': 4.0,
+        'width': 3.5,
         'target-arrow-shape': 'triangle',
         'target-arrow-color': e => e.data('color') || '#00f0ff',
         'line-color': e => e.data('color') || '#00f0ff',
+        'label': e => e.data('rel_label') || '',
+        'arrow-scale': 1.45,
         'display': 'element'
       });
     } else {
@@ -640,22 +688,52 @@ export function GraphCanvas({
           style={{ top: `${hoveredEntity.y}px`, left: `${hoveredEntity.x}px` }}
         >
           <div className="forensic-hover-head">
-            <span className="forensic-title">{hoveredEntity.title}</span>
+            <div className="forensic-title-wrap">
+              <span className="forensic-node-icon">{hoveredEntity.icon}</span>
+              <span className="forensic-title">{hoveredEntity.title}</span>
+            </div>
             <span className={`forensic-badge ${hoveredEntity.badgeClass}`}>
               {hoveredEntity.type}
             </span>
           </div>
+
+          {hoveredEntity.relLabel && (
+            <div className="forensic-rel-banner">
+              <i className="fa-solid fa-diagram-project"></i>
+              <span>Relation: <strong>{hoveredEntity.relLabel}</strong></span>
+            </div>
+          )}
           
-          <div style={{ fontSize: '0.62rem', color: 'var(--cyan-bright)', fontFamily: 'var(--font-mono)', marginBottom: '3px' }}>
-            FORENSIC REASON FOR EXISTENCE:
-          </div>
-          <div className="forensic-reason-box">
-            {hoveredEntity.reason}
+          <div className="forensic-reason-section">
+            <div className="forensic-section-label">
+              <i className="fa-solid fa-microchip"></i> EXPLAINER AGENT FORENSIC VERDICT:
+            </div>
+            <div className="forensic-reason-box">
+              {hoveredEntity.reason}
+            </div>
           </div>
 
+          {/* Active Relational Nexus Connections */}
+          {hoveredEntity.connections && hoveredEntity.connections.length > 0 && (
+            <div className="forensic-nexus-section">
+              <div className="forensic-section-label">
+                <i className="fa-solid fa-arrows-split-up-and-left"></i> ACTIVE RELATIONAL NEXUS:
+              </div>
+              <div className="forensic-conn-list">
+                {hoveredEntity.connections.map((conn, idx) => (
+                  <div key={idx} className="forensic-conn-item">
+                    <span className="conn-direction">{conn.dir}</span>
+                    <span className="conn-rel" style={{ borderColor: conn.color }}>{conn.rel}</span>
+                    <span className="conn-target">{conn.otherIcon} {conn.otherName}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="forensic-metadata-row">
-            <span><i className="fa-solid fa-file-lines"></i> Source: {hoveredEntity.doc}</span>
-            <span>{hoveredEntity.metric}</span>
+            <span><i className="fa-solid fa-file-shield"></i> Exhibit: {hoveredEntity.doc}</span>
+            <span className="forensic-metric-badge">{hoveredEntity.metric}</span>
           </div>
         </div>
       )}

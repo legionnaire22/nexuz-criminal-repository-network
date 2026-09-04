@@ -340,14 +340,14 @@ export default function App() {
     layout.run();
   };
 
-  // Toggle suspect state — with cinematic graph animation
+  // Toggle suspect state — with instantaneous graph visual transformation
   const handleToggleMarkSuspect = (suspectId, newStatus) => {
     setSuspects(prev => prev.map(s => {
       if (s.id === suspectId) {
         const updated = {
           ...s,
           isSuspect: newStatus,
-          score: newStatus ? Math.max(s.score, 0.96) : 0.05
+          score: newStatus ? Math.max(s.score, 0.98) : 0.02
         };
         if (selectedSuspect && selectedSuspect.id === suspectId) {
           setSelectedSuspect(updated);
@@ -362,125 +362,93 @@ export default function App() {
     const node = cy.getElementById(suspectId);
     if (!node.length) return;
 
-    // Update the node type — Cytoscape style selectors react instantly
-    node.data('type', newStatus ? 'target' : 'cleared');
-
-    const connectedEdges = node.connectedEdges();
-    const connectedNodes = connectedEdges.connectedNodes().difference(node);
-    const otherNodes = cy.nodes().difference(node).difference(connectedNodes);
-
-    const burstColor   = newStatus ? '#ff2a55' : '#00ff88';
-    const burstBorder  = newStatus ? '#ff7b95' : '#86efac';
-    const edgeColor    = newStatus ? '#ff2a55' : '#00ff88';
-    const nodeSize     = parseFloat(node.data('size')) || 28;
+    const targetName = node.data('label') || suspectId;
+    const nodeSize = parseFloat(node.data('size')) || 32;
 
     if (newStatus) {
       // ── MARK AS SUSPECT ──────────────────────────────────────
-      // 1) Pop: burst the node to 1.6× size with red glow
+      node.data('type', 'target');
+      node.data('icon', '🚨');
+      node.style({
+        'background-color': '#ff2a55',
+        'background-opacity': 0.35,
+        'border-color': '#ff2a55',
+        'border-width': 3.5,
+        'shadow-blur': 38,
+        'shadow-color': '#ff2a55',
+        'shadow-opacity': 0.95,
+        'label': '🚨',
+        'opacity': 1.0,
+        'display': 'element'
+      });
+
+      const connectedEdges = node.connectedEdges();
+      connectedEdges.style({
+        'line-color': '#ff2a55',
+        'target-arrow-color': '#ff2a55',
+        'opacity': 1.0,
+        'width': 3.5,
+        'display': 'element'
+      });
+
+      // Animate attention pop
       node.animate({
-        style: {
-          'width':         nodeSize * 1.7,
-          'height':        nodeSize * 1.7,
-          'border-width':  6,
-          'border-color':  burstBorder,
-          'shadow-blur':   45,
-          'shadow-color':  burstColor,
-          'shadow-opacity': 1
-        },
-        duration: 280,
-        easing: 'ease-out-cubic'
+        style: { 'width': nodeSize * 1.5, 'height': nodeSize * 1.5 },
+        duration: 220
       }, {
-        // 2) Settle back to correct target size
         complete: () => {
           node.animate({
-            style: {
-              'width':         nodeSize,
-              'height':        nodeSize,
-              'border-width':  3,
-              'shadow-blur':   18,
-              'shadow-color':  '#ff2a55',
-              'shadow-opacity': 0.85
-            },
-            duration: 350,
-            easing: 'ease-in-out-cubic'
+            style: { 'width': nodeSize, 'height': nodeSize },
+            duration: 250
           });
         }
       });
 
-      // 3) Flash connected edges crimson
-      const origColors = {};
-      connectedEdges.forEach(e => { origColors[e.id()] = e.data('color'); });
-      connectedEdges.animate({
-        style: { 'line-color': edgeColor, 'target-arrow-color': edgeColor, opacity: 1, width: 4 },
-        duration: 250
-      }, {
-        complete: () => {
-          connectedEdges.forEach(e => {
-            e.animate({
-              style: { 'line-color': origColors[e.id()] || edgeColor, 'target-arrow-color': origColors[e.id()] || edgeColor, opacity: 0.7, width: e.data('weight') || 2 },
-              duration: 400
-            });
-          });
-        }
-      });
-
-      // 4) Dim the unconnected backdrop — creates a spotlight effect
-      otherNodes.animate({ style: { opacity: 0.18 }, duration: 300 });
-      setTimeout(() => {
-        otherNodes.animate({ style: { opacity: null }, duration: 600 });
-      }, 1200);
-
+      setHypothesisBanner(`TARGET DESIGNATED: ${targetName} marked as Prime Suspect (GNN Threat Score: 98%). Graph and evidence ledger updated.`);
     } else {
       // ── CLEAR / INNOCENT ─────────────────────────────────────
-      // 1) Green burst
+      node.data('type', 'cleared');
+      node.data('icon', '🟢');
+      node.style({
+        'background-color': '#00ff88',
+        'background-opacity': 0.25,
+        'border-color': '#86efac',
+        'border-width': 2.5,
+        'shadow-blur': 16,
+        'shadow-color': '#00ff88',
+        'shadow-opacity': 0.7,
+        'label': '🟢',
+        'opacity': 0.9,
+        'display': 'element'
+      });
+
+      const connectedEdges = node.connectedEdges();
+      connectedEdges.style({
+        'line-color': '#00ff88',
+        'target-arrow-color': '#00ff88',
+        'line-style': 'dashed',
+        'opacity': 0.6,
+        'width': 2.0
+      });
+
+      // Animate green pulse
       node.animate({
-        style: {
-          'width':          nodeSize * 1.5,
-          'height':         nodeSize * 1.5,
-          'border-width':   5,
-          'border-color':   burstBorder,
-          'shadow-blur':    35,
-          'shadow-color':   burstColor,
-          'shadow-opacity': 1
-        },
-        duration: 280,
-        easing: 'ease-out-cubic'
+        style: { 'width': nodeSize * 1.35, 'height': nodeSize * 1.35 },
+        duration: 220
       }, {
         complete: () => {
           node.animate({
-            style: {
-              'width':         nodeSize,
-              'height':        nodeSize,
-              'border-width':  2,
-              'shadow-blur':   0,
-              'shadow-opacity': 0
-            },
-            duration: 350,
-            easing: 'ease-in-out-cubic'
+            style: { 'width': nodeSize * 0.9, 'height': nodeSize * 0.9 },
+            duration: 250
           });
         }
       });
 
-      // 2) Flash connected edges green briefly
-      const origColors = {};
-      connectedEdges.forEach(e => { origColors[e.id()] = e.data('color'); });
-      connectedEdges.animate({
-        style: { 'line-color': edgeColor, 'target-arrow-color': edgeColor, opacity: 1 },
-        duration: 250
-      }, {
-        complete: () => {
-          connectedEdges.forEach(e => {
-            e.animate({
-              style: { 'line-color': origColors[e.id()] || '#475569', 'target-arrow-color': origColors[e.id()] || '#475569', opacity: 0.7 },
-              duration: 500
-            });
-          });
-        }
-      });
+      setHypothesisBanner(`CIVILIAN EXONERATED: ${targetName} cleared as Innocent Witness under BSA Sec 63 safeguards.`);
     }
 
-    // Always pan to and select the changed node
-    cy.animate({ center: { eles: node }, zoom: Math.max(cy.zoom(), 1.3), duration: 350 });
+    // Pan and focus on the updated node
+    cy.animate({ center: { eles: node }, zoom: Math.max(cy.zoom(), 1.25), duration: 350 });
     cy.elements().unselect();
     node.select();
   };
@@ -767,38 +735,59 @@ export default function App() {
         }
         const addedEdge = cy.getElementById(edgeId);
         addedEdge.style({
+          'label': 'Ratified Alias Merge (BNSS 111)',
+          'font-size': '10px',
+          'font-family': 'JetBrains Mono, monospace',
+          'font-weight': '700',
+          'color': '#ffffff',
+          'text-background-color': '#060a12',
+          'text-background-opacity': 0.96,
+          'text-background-padding': '4px',
+          'text-background-shape': 'roundrectangle',
+          'text-border-color': '#00ff88',
+          'text-border-width': 1,
+          'text-rotation': 'autorotate',
           'line-color': '#00ff88',
           'target-arrow-color': '#00ff88',
           'width': 4.5,
           'opacity': 1.0,
           'target-arrow-shape': 'triangle',
+          'arrow-scale': 1.45,
           'display': 'element'
         });
 
         n1Node.style({
           'display': 'element',
           'opacity': 1.0,
+          'background-color': '#00ff88',
+          'background-opacity': 0.35,
           'border-color': '#00ff88',
           'border-width': 3.5,
-          'shadow-blur': 35,
+          'shadow-blur': 38,
           'shadow-color': '#00ff88',
           'shadow-opacity': 1
         });
         n2Node.style({
           'display': 'element',
           'opacity': 1.0,
+          'background-color': '#00ff88',
+          'background-opacity': 0.35,
           'border-color': '#00ff88',
           'border-width': 3.5,
-          'shadow-blur': 35,
+          'shadow-blur': 38,
           'shadow-color': '#00ff88',
           'shadow-opacity': 1
         });
 
-        // Cinematic zoom to the merged nodes and edge
-        cy.animate({
-          fit: { eles: n1Node.add(n2Node).add(addedEdge), padding: 80 },
-          duration: 450
-        });
+        // Close modal after brief confirmation so investigator sees live canvas action
+        setTimeout(() => {
+          setShowReviewModal(false);
+          // Cinematic zoom to the merged nodes and edge
+          cy.animate({
+            fit: { eles: n1Node.add(n2Node).add(addedEdge), padding: 90 },
+            duration: 500
+          });
+        }, 750);
 
         setConsensusScore(prev => Math.min(100, Math.max(96.4, Number((prev + 1.8).toFixed(1)))));
         setHypothesisBanner(`HITL DECISION RATIFIED: ${e1Raw} & ${e2Raw} merged under BNSS Sec 111.`);
@@ -810,7 +799,12 @@ export default function App() {
         }
         n1Node.animate({ style: { opacity: 0.3 }, duration: 400 });
         n2Node.animate({ style: { opacity: 0.3 }, duration: 400 });
-        setHypothesisBanner(`HITL DECISION REJECTED: False link between ${e1Raw} & ${e2Raw} eliminated.`);
+
+        setTimeout(() => {
+          setShowReviewModal(false);
+        }, 750);
+
+        setHypothesisBanner(`HITL DECISION REJECTED: False candidate link between ${e1Raw} & ${e2Raw} eliminated.`);
       }
     }
 

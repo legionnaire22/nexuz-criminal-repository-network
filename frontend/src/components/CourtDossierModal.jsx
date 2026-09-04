@@ -48,45 +48,50 @@ export function CourtDossierModal({
               this annexure cryptographically verifies the immutable data lineage, SHA-256 hash chains, and deterministic graph extractions 
               from seized police FIRs, banking journals, and telecom CDRs. Admissibility in a Court of Law requires formal endorsement by the Investigating Officer (IO) below.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', fontSize: '0.64rem', color: '#cbd5e1', paddingTop: '6px', borderTop: '1px dashed rgba(168, 85, 247, 0.3)' }}>
+            <div className="court-audit-grid">
               <div><strong>Seized Exhibits:</strong> {legal.exhibitsList ? legal.exhibitsList.join(', ') : 'FIRs, CDRs, Txn Journals'}</div>
               <div><strong>Statutory Charges:</strong> {legal.statutorySections}</div>
               <div><strong>Audit State:</strong> Tamper-Evident SHA-256 Sealed</div>
             </div>
           </div>
 
-          <h4 style={{ fontFamily: 'var(--font-display)', color: '#fff', marginBottom: '8px', fontSize: '0.95rem' }}>
+          <h4 className="court-section-title">
             Forensic Chargesheet Narrative & Modus Operandi: {caseMetadata.title} [{caseMetadata.code}]
           </h4>
 
           {/* Detailed Crime Story Breakdown Matrix */}
-          <div style={{ background: 'rgba(15, 23, 42, 0.65)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '6px', padding: '12px', marginBottom: '14px' }}>
-            <p style={{ color: '#e2e8f0', margin: '0 0 10px 0', lineHeight: '1.5', fontSize: '0.74rem' }}>
+          <div className="court-breakdown-box">
+            <p className="court-breakdown-narrative">
               {legal.summaryNarrative}
             </p>
 
             {legal.breakdown && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '10px' }}>
-                <div style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>
-                  <strong style={{ color: '#ff2a55' }}><i className="fa-solid fa-crosshairs"></i> Modus Operandi & Genesis:</strong> {legal.breakdown.genesis}
+              <div className="court-breakdown-pillars">
+                <div className="court-breakdown-row">
+                  <strong className="pillar-tag genesis"><i className="fa-solid fa-crosshairs"></i> Modus Operandi & Genesis:</strong>
+                  <span className="pillar-text">{legal.breakdown.genesis}</span>
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>
-                  <strong style={{ color: '#00ff88' }}><i className="fa-solid fa-money-bill-transfer"></i> Financial Smurfing & Layering:</strong> {legal.breakdown.financialTrail}
+                <div className="court-breakdown-row">
+                  <strong className="pillar-tag financial"><i className="fa-solid fa-money-bill-transfer"></i> Financial Smurfing & Layering:</strong>
+                  <span className="pillar-text">{legal.breakdown.financialTrail}</span>
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>
-                  <strong style={{ color: '#00f0ff' }}><i className="fa-solid fa-tower-cell"></i> Spatial & BTS Telecom Nexus:</strong> {legal.breakdown.telecomNexus}
+                <div className="court-breakdown-row">
+                  <strong className="pillar-tag telecom"><i className="fa-solid fa-tower-cell"></i> Spatial & BTS Telecom Nexus:</strong>
+                  <span className="pillar-text">{legal.breakdown.telecomNexus}</span>
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>
-                  <strong style={{ color: '#fbbf24' }}><i className="fa-solid fa-truck-ramp-box"></i> Physical Seizures & Asset Recoveries:</strong> {legal.breakdown.seizures}
+                <div className="court-breakdown-row">
+                  <strong className="pillar-tag seizures"><i className="fa-solid fa-truck-ramp-box"></i> Physical Seizures & Asset Recoveries:</strong>
+                  <span className="pillar-text">{legal.breakdown.seizures}</span>
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>
-                  <strong style={{ color: '#c084fc' }}><i className="fa-solid fa-shield-halved"></i> Statutory BSA Sec 63 Pruning Audit:</strong> {legal.breakdown.pruningAudit}
+                <div className="court-breakdown-row">
+                  <strong className="pillar-tag compliance"><i className="fa-solid fa-shield-halved"></i> Statutory BSA Sec 63 Pruning Audit:</strong>
+                  <span className="pillar-text">{legal.breakdown.pruningAudit}</span>
                 </div>
               </div>
             )}
           </div>
 
-          <h5 style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan-bright)', marginBottom: '6px' }}>
+          <h5 className="court-citations-title">
             PRIMARY EVIDENTIARY CITATIONS & CHAIN-OF-CUSTODY:
           </h5>
 
@@ -102,9 +107,9 @@ export function CourtDossierModal({
             <tbody>
               {suspects.filter(s => s.score > 0.5).map(s => (
                 <tr key={s.id}>
-                  <td style={{ color: 'var(--cyan-bright)' }}>{s.id}</td>
+                  <td className="evidence-node-id">{s.id}</td>
                   <td><strong>{s.name}</strong> ({s.role})</td>
-                  <td style={{ color: '#94a3b8' }}>{s.doc || `fir_${currentCase}_1.txt`}</td>
+                  <td className="evidence-source-doc">{s.doc || `fir_${currentCase}_1.txt`}</td>
                   <td>{s.reason}</td>
                 </tr>
               ))}
@@ -151,7 +156,7 @@ export function CourtDossierModal({
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="court-dossier-footer no-print">
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-dim)' }}>
               SHA-256 AUDIT HASH: {legal.sha256 || '8f4a2b91c0e35d72f1a8e9d4c2b7a1f5'}
             </span>
@@ -159,7 +164,7 @@ export function CourtDossierModal({
               className="btn-tactical-header btn-court-dossier" 
               onClick={() => window.print()}
             >
-              <i className="fa-solid fa-print"></i> Print Official Court Dossier
+              <i className="fa-solid fa-print"></i> Print Official Court Dossier (PDF)
             </button>
           </div>
         </div>
