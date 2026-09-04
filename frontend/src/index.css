@@ -1344,6 +1344,63 @@ body {
   gap: 4px;
 }
 
+/* Anomaly Standby & Animation */
+.anomaly-standby-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px 10px;
+  background: rgba(8, 12, 20, 0.4);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+.radar-sweep-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 240, 255, 0.06);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: var(--cyan-bright);
+  margin-bottom: 6px;
+}
+.standby-title {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 3px;
+}
+.standby-desc {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: #64748b;
+  line-height: 1.35;
+}
+.anomaly-slide-in {
+  animation: slideInAnomaly 0.35s ease-out both;
+}
+@keyframes slideInAnomaly {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.badge-detected {
+  background: rgba(255, 42, 85, 0.2) !important;
+  border-color: var(--crimson-target) !important;
+  color: #ff5e7e !important;
+}
+
 /* Court Dossier / Review Modal */
 .court-modal-overlay {
   position: fixed;
