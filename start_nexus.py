@@ -19,7 +19,8 @@ if __name__ == "__main__":
     print("="*60)
     print(" -> Backend API:  http://localhost:8000")
     print(" -> Swagger Docs: http://localhost:8000/docs")
-    print(" -> Frontend UI:  Open 'nexus/frontend/index.html' in browser")
+    print(" -> Frontend Dev: Run 'npm run dev' in 'nexus/frontend' (http://localhost:5173)")
+    print(" -> Static UI:    Open 'nexus/frontend/index.legacy.html' in browser")
     print("="*60 + "\n")
     
     uvicorn.run("main:app", app_dir=os.path.join(os.path.dirname(__file__), "backend"), host="127.0.0.1", port=8000, reload=True)

@@ -403,7 +403,61 @@ def execute_query(req: QueryRequest):
     return supervisor_agent.process_query(req)
 
 
-# ── 5. Audit Log ────────────────────────────────────────────────────────────
+# ── 5. Court Dossier Export Endpoint ────────────────────────────────────────
+
+@app.get("/api/v1/court-dossier/{case_id}")
+def get_court_dossier(case_id: str):
+    """Generate court-admissible forensic intelligence dossier under BSA Sec 63."""
+    case_key = case_id.lower()
+    
+    metadata = {
+        "sandstorm": {
+            "title": "Operation Sandstorm",
+            "code": "NCR-2025-0312",
+            "jurisdiction": "HON'BLE SPECIAL NDPS & PMLA COURT // GREATER MUMBAI SESSIONS DIVISION",
+            "sections": "NDPS Act 1985 (Sec 22, 29) • PMLA 2002 (Sec 3, 4) • BNSS 2023 (Sec 111)",
+            "sha256": "8f4a2b91c0e35d72f1a8e9d4c2b7a1f5",
+            "terminal_id": "NEXUS-NODE-MUM-NDPS-01",
+            "exhibits": ["fir_sandstorm_1.txt", "fir_sandstorm_2.txt", "fir_sandstorm_3.txt", "cdr_sandstorm.csv", "txn_sandstorm.csv"]
+        },
+        "phantom": {
+            "title": "Operation Phantom",
+            "code": "NCR-2025-0198",
+            "jurisdiction": "HON'BLE SPECIAL FINANCIAL CRIMES & EXTORTION TRIBUNAL // STATE SESSIONS",
+            "sections": "Bharatiya Nyaya Sanhita (BNS 2023 Sec 308, 351) • IT Act 2000 (Sec 66D) • PMLA 2002 (Sec 3, 4)",
+            "sha256": "7d9b3a12e5c84f61e2a9b4d3c1a8e7f2",
+            "terminal_id": "NEXUS-NODE-FIN-EXT-02",
+            "exhibits": ["fir_phantom_1.txt", "fir_phantom_2.txt", "fir_phantom_4.txt", "cdr_phantom.csv", "txn_phantom.csv"]
+        },
+        "mirage": {
+            "title": "Operation Mirage",
+            "code": "NCR-2025-0442",
+            "jurisdiction": "HON'BLE CHIEF METROPOLITAN MAGISTRATE // CYBER & NARCOTICS DIVISION",
+            "sections": "Information Technology Act 2000 (Sec 43, 66C, 66D) • Bharatiya Nyaya Sanhita (BNS 2023 Sec 318, 319)",
+            "sha256": "4c8f1e92a3d75b61f0e4b8a2c7d9e1f5",
+            "terminal_id": "NEXUS-NODE-CYBER-MUM-04",
+            "exhibits": ["fir_mirage_1.txt", "fir_mirage_2.txt", "fir_mirage_3.txt", "cdr_mirage.csv", "txn_mirage.csv"]
+        }
+    }
+    
+    case_info = metadata.get(case_key, metadata["sandstorm"])
+    
+    audit_logs.append({
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "user": "Lead Investigator (Badge #4401)",
+        "action": "COURT_DOSSIER_ACCESSED",
+        "details": f"Generated BSA Section 63 Court Dossier for {case_info['title']} [{case_info['code']}]",
+        "ip": "127.0.0.1"
+    })
+    
+    return {
+        "status": "success",
+        "case_id": case_key,
+        "dossier": case_info
+    }
+
+
+# ── 6. Audit Log ────────────────────────────────────────────────────────────
 
 @app.get("/api/v1/audit-log")
 def get_audit_log():
