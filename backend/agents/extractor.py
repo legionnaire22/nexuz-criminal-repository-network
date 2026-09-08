@@ -7,6 +7,7 @@ Multi-tier hybrid extraction pipeline:
   Tier 3: Self-correction and relationship linking
 """
 
+import os
 import re
 import io
 import uuid
@@ -57,6 +58,8 @@ KNOWN_ORGS = [
 class ExtractorAgent:
     def __init__(self):
         self.llm = llm_client
+        self.primary_model = os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3.5-lightning:free")
+        self.fallback_model = os.getenv("OPENROUTER_FALLBACK_MODEL", "google/gemini-2.5-flash")
 
     def extract_from_fir(self, text: str, filename: str, case_id: str) -> IngestionBatch:
         """
@@ -219,7 +222,9 @@ Return STRICTLY valid JSON adhering to this schema:
 """
             llm_res = self.llm.generate_json(
                 prompt=prompt,
-                system_prompt="You are an expert Law Enforcement Intelligence Analyst. Always output strict JSON."
+                system_prompt="You are an expert Law Enforcement Intelligence Analyst. Always output strict JSON.",
+                model=self.primary_model,
+                fallback_models=[self.fallback_model, "google/gemini-2.5-flash", "google/gemini-2.5-flash-lite"]
             )
 
             if llm_res and isinstance(llm_res, dict):

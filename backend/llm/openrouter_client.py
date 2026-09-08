@@ -8,7 +8,7 @@ import os
 import re
 import json
 import requests
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 def load_env():
     """Load .env file if present."""
@@ -24,8 +24,8 @@ def load_env():
 load_env()
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.0-flash-001")
-FALLBACK_MODEL = os.getenv("OPENROUTER_FALLBACK_MODEL", "meta-llama/llama-3.3-70b-instruct:free")
+DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3.5-lightning:free")
+FALLBACK_MODEL = os.getenv("OPENROUTER_FALLBACK_MODEL", "google/gemini-2.5-flash")
 
 
 class OpenRouterClient:
@@ -34,16 +34,37 @@ class OpenRouterClient:
         if not self.api_key:
             print("[OpenRouterClient] Warning: OPENROUTER_API_KEY not found. Operating in local fallback mode.")
 
-    def generate_json(self, prompt: str, system_prompt: str = "", model: str = None) -> Optional[Dict[str, Any]]:
+    def generate_json(
+        self,
+        prompt: str,
+        system_prompt: str = "",
+        model: str = None,
+        fallback_models: Optional[List[str]] = None
+    ) -> Optional[Dict[str, Any]]:
         """
         Calls OpenRouter and enforces strict JSON output parsing.
-        Attempts primary model first, falls back to fallback model on failure.
+        Attempts primary model (NVIDIA Nemotron 3.5) first, then falls back to Gemini on failure.
         """
         if not self.api_key:
             return None
 
         primary_model = model or DEFAULT_MODEL
-        models_to_try = [primary_model, FALLBACK_MODEL]
+        candidates = [primary_model]
+        if fallback_models:
+            candidates.extend(fallback_models)
+        else:
+            candidates.extend([
+                FALLBACK_MODEL,
+                "google/gemini-2.5-flash",
+                "google/gemini-2.5-flash-lite",
+                "meta-llama/llama-3.3-70b-instruct:free"
+            ])
+
+        # Deduplicate preserving order
+        models_to_try = []
+        for m in candidates:
+            if m and m not in models_to_try:
+                models_to_try.append(m)
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",

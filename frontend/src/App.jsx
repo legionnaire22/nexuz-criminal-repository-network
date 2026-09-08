@@ -19,7 +19,7 @@ export default function App() {
 
   // Analysis / Pipeline State (Initial unanalyzed state)
   const [isAnalyzed, setIsAnalyzed] = useState(false);
-  const [currentPhase, setCurrentPhase] = useState(0); // 0 = standby, 1 = probe, 2 = anomaly, 3 = GNN, 4 = consensus
+  const [currentPhase, setCurrentPhase] = useState(0); // 0 = standby, 1 = probe, 2 = anomaly, 3 = GDS, 4 = consensus
 
   // Debate state (Empty until investigation runs)
   const [debateTopic, setDebateTopic] = useState("alias");
@@ -200,11 +200,11 @@ export default function App() {
       await sleep(Math.round(550 * sf));
 
       // ═════════════════════════════════════════════════════════
-      // PHASE 3: GNN RISK SCORING & CRIME ISOLATION (Analyst Speaks)
+      // PHASE 3: GDS GRAPH RISK SCORING & CRIME ISOLATION (Analyst Speaks)
       // ═════════════════════════════════════════════════════════
       setCurrentPhase(3);
-      setHypothesisStatus("GNN RISK SCORING ACTIVE");
-      setHypothesisBanner(`PHASE 3: GNN RISK SCORING — Illuminating Core Syndicate, Pruning ${caseMeta.fpRejected || 26} Noise Links`);
+      setHypothesisStatus("GDS RISK SCORING ACTIVE");
+      setHypothesisBanner(`PHASE 3: GDS GRAPH SCORING — Illuminating Core Syndicate, Pruning ${caseMeta.fpRejected || 26} Noise Links`);
 
       // Transition from raw mode: only crime nodes/edges shine brightly, ambient noise deeply fades
       cy.elements().removeClass('raw-mode');
@@ -404,7 +404,7 @@ export default function App() {
         }
       });
 
-      setHypothesisBanner(`TARGET DESIGNATED: ${targetName} marked as Prime Suspect (GNN Threat Score: 98%). Graph and evidence ledger updated.`);
+      setHypothesisBanner(`TARGET DESIGNATED: ${targetName} marked as Prime Suspect (Graph Threat Score: 98%). Graph and evidence ledger updated.`);
     } else {
       // ── CLEAR / INNOCENT ─────────────────────────────────────
       node.data('type', 'cleared');

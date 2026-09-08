@@ -23,12 +23,114 @@ export const CASE_METADATA = {
       }
     },
     suspects: [
-      { id: "P001", name: "Arjun Mehta", alias: "A. Mehta / A.M.", role: "Syndicate Financier", score: 0.98, tags: ["PMLA STRUCTURING", "BKC-112 TOWER", "HAWALA HUB"], isSuspect: true, doc: "fir_sandstorm_1.txt", reason: "10 structured deposits <₹10L to Phoenix Exports; Primary MSISDN +91-98400-11111 active at raid site." },
-      { id: "P002", name: "Kabir Sheikh", alias: "Kabeer", role: "Logistics Coordinator", score: 0.91, tags: ["CDR BURST", "BKC-112 TOWER"], isSuspect: true, doc: "fir_sandstorm_1.txt", reason: "18 burst calls prior to seizure; Co-located at Tower BKC-112 with Arjun Mehta." },
-      { id: "P003", name: "Deepak Rao", alias: "D. Rao", role: "Hawala Courier", score: 0.88, tags: ["MULE ACCOUNT", "CASH WITHDRAWAL"], isSuspect: true, doc: "fir_sandstorm_2.txt", reason: "Executed rapid cash layering from HDFC-XXXX-1001; Named in FIR #0312 as courier." },
-      { id: "P004", name: "Vikram Sinha", alias: "V. Sinha", role: "Telecom Distributor", score: 0.82, tags: ["BURNER SIM POOL", "IMEI SWAP"], isSuspect: false, doc: "fir_sandstorm_3.txt", reason: "Telecom franchise owner flagged for dispensing bulk unverified prepaid SIM cards." },
-      { id: "P005", name: "Anand Krishnan", alias: "A. Krishnan", role: "Shell Entity Director", score: 0.79, tags: ["PHOENIX EXPORTS", "CURRENT ACCT"], isSuspect: false, doc: "fir_sandstorm_3.txt", reason: "Registered director of Phoenix Exports Pvt Ltd; Facilitated corporate banking conduit." },
-      { id: "W001", name: "Dr. R. K. Verma", alias: "Eyewitness", role: "Innocent Bystander", score: 0.04, tags: ["WITNESS", "CLEARED"], isSuspect: false, doc: "fir_sandstorm_1.txt", reason: "Civilian medical practitioner present during search; Cleared of all criminal involvement." }
+      {
+        id: "P001",
+        name: "Arjun Mehta",
+        alias: "A. Mehta / A.M.",
+        role: "Syndicate Financier",
+        score: 0.98,
+        tags: ["PMLA STRUCTURING", "BKC-112 TOWER", "HAWALA HUB"],
+        isSuspect: true,
+        doc: "fir_sandstorm_1.txt",
+        reason: "10 structured deposits <₹10L to Phoenix Exports; Primary MSISDN +91-98400-11111 active at raid site.",
+        evidence: {
+          telecom: "18 burst calls in 48h pre-incident window to logistics handler Kabir Sheikh (MSISDN +91-98400-11111). Z-Score = 3.84.",
+          financial: "10 structured deposits (<₹10L each, total ₹98.7L) routed to Phoenix Exports corporate account to evade FIU-IND thresholds [ANO-002].",
+          spatial: "Cellular triangulation confirmed concurrent BTS registration at Tower BKC-112 during contraband staging.",
+          graph: "NetworkX / Neo4j PageRank = 0.34 (Highest authority score in network, Mastermind node). In-degree=14, Out-degree=8.",
+          statutory: "Named as Accused #1 in FIR #0101; charged under NDPS Act 1985 Sec 21/29, PMLA 2002 Sec 3/4, and BNS 2023 Sec 111 (Organized Crime)."
+        }
+      },
+      {
+        id: "P002",
+        name: "Kabir Sheikh",
+        alias: "Kabeer",
+        role: "Logistics Coordinator",
+        score: 0.91,
+        tags: ["CDR BURST", "BKC-112 TOWER"],
+        isSuspect: true,
+        doc: "fir_sandstorm_1.txt",
+        reason: "18 burst calls prior to seizure; Co-located at Tower BKC-112 with Arjun Mehta.",
+        evidence: {
+          telecom: "MSISDN +91-98400-22222 received 18 abnormal encrypted calls in 48h preceding container dispatch [ANO-001].",
+          financial: "Pass-through account holder receiving operational logistics funds (₹4.2L) for container handling.",
+          spatial: "Logged concurrently at Tower BKC-112 with kingpin and subsequently tracked to Nhava Sheva CFS container depot.",
+          graph: "PageRank = 0.22, Degree = 9. Key operational coordinator bridging finance and transport.",
+          statutory: "FIR #0101 Accused #2; charged under NDPS Act Sec 29 (Criminal Conspiracy) and BNS Sec 111."
+        }
+      },
+      {
+        id: "P003",
+        name: "Deepak Rao",
+        alias: "D. Rao",
+        role: "Hawala Courier",
+        score: 0.88,
+        tags: ["MULE ACCOUNT", "CASH WITHDRAWAL"],
+        isSuspect: true,
+        doc: "fir_sandstorm_2.txt",
+        reason: "Executed rapid cash layering from HDFC-XXXX-1001; Named in FIR #0312 as courier.",
+        evidence: {
+          telecom: "Direct communication line with Kabir Sheikh; 4 burner SIM calls logged on morning of seizure.",
+          financial: "Withdrew ₹14,50,000 physical cash from HDFC mule accounts in structured batches under ₹2L.",
+          spatial: "Intercepted behind wheel of seized transport van MH-04-AZ-8812 at Nhava Sheva port gate.",
+          graph: "Betweenness = 0.31; Acts as physical transit terminal connecting financial conduit to port.",
+          statutory: "Apprehended on site; FIR #0312; NDPS Act Sec 21 (Possession of Commercial Contraband) & PMLA Sec 4."
+        }
+      },
+      {
+        id: "P004",
+        name: "Vikram Sinha",
+        alias: "V. Sinha",
+        role: "Telecom Distributor",
+        score: 0.82,
+        tags: ["BURNER SIM POOL", "IMEI SWAP"],
+        isSuspect: false,
+        doc: "fir_sandstorm_3.txt",
+        reason: "Telecom franchise owner flagged for dispensing bulk unverified prepaid SIM cards.",
+        evidence: {
+          telecom: "Dispensed 12 unverified burner SIM cards without mandatory biometric Aadhaar verification.",
+          financial: "Received retail cash commissions; no direct PMLA smurfing velocity detected in corporate journals.",
+          spatial: "Franchise SIM store in Kurla West; no presence logged at Nhava Sheva or raid scene.",
+          graph: "Degree = 4 (Peripheral distributor); zero direct edges to contraband transport vehicles.",
+          statutory: "Flagged under IT Act 2000 Sec 66C and TRAI KYC regulations; currently under regulatory audit."
+        }
+      },
+      {
+        id: "P005",
+        name: "Anand Krishnan",
+        alias: "A. Krishnan",
+        role: "Shell Entity Director",
+        score: 0.79,
+        tags: ["PHOENIX EXPORTS", "CURRENT ACCT"],
+        isSuspect: false,
+        doc: "fir_sandstorm_3.txt",
+        reason: "Registered director of Phoenix Exports Pvt Ltd; Facilitated corporate banking conduit.",
+        evidence: {
+          telecom: "Zero direct call records to field logistics or transport couriers; communication restricted to corporate auditors.",
+          financial: "Authorized signatory on Current Account ACC001 (Phoenix Exports) receiving ₹98.7L in smurfing deposits.",
+          spatial: "Registered office in Bandra-Kurla Complex commercial zone; no field contraband staging.",
+          graph: "Betweenness Centrality = 0.42 (Corporate Conduit); passes corporate funds to Axis offshore accounts.",
+          statutory: "PMLA 2002 Sec 3 (Corporate Shell Laundering); currently flagged for financial inquiry, not active custody."
+        }
+      },
+      {
+        id: "W001",
+        name: "Dr. R. K. Verma",
+        alias: "Eyewitness",
+        role: "Innocent Bystander",
+        score: 0.04,
+        tags: ["WITNESS", "CLEARED"],
+        isSuspect: false,
+        doc: "fir_sandstorm_1.txt",
+        reason: "Civilian medical practitioner present during search; Cleared of all criminal involvement.",
+        evidence: {
+          telecom: "0 / 3,850 calls linked to criminal syndicate handsets (+91-98400-11111 / 22222). Anomaly Z-Score = 0.00.",
+          financial: "0 / 3,412 transactions to/from Phoenix Exports, HDFC-XXXX-1001, or Hawala ledgers. Zero layering velocity.",
+          spatial: "Medical clinic located adjacent to raid premises; incidental presence during emergency search-and-seizure.",
+          graph: "Betweenness Centrality = 0.000 (Completely isolated from criminal flow). Degree = 1 (Witness statement only). PageRank = 0.04 (Civilian baseline).",
+          statutory: "Attested independent panch witness under BNSS 2023 Sec 180 / CrPC 161. Formally exonerated with zero false accusation under BSA 2023 Sec 63."
+        }
+      }
     ],
     alerts: [
       { id: "ANO-001", title: "Telecom CDR Burst Pattern", layer: "Layer 1 Heuristic", severity: "HIGH", detail: "18 calls within 48h pre-incident window between Arjun Mehta & logistics node." },
@@ -78,10 +180,78 @@ export const CASE_METADATA = {
       }
     },
     suspects: [
-      { id: "Q006", name: "Anand Krishnan", alias: "A. Krishnan", role: "Hidden Cross-Cluster Bridge", score: 0.98, tags: ["STRUCTURAL BROKER", "LOW CLUSTERING"], isSuspect: true, doc: "fir_phantom_4.txt", reason: "Sole intermediary linking Extortion Cluster A to Laundering Cluster B." },
-      { id: "Q001", name: "Vikram Sinha", alias: "V. Sinha", role: "Extortion Ring Leader (Cluster A)", score: 0.93, tags: ["EXTORTION CELL", "DELTA FINANCE"], isSuspect: true, doc: "fir_phantom_1.txt", reason: "Coordinated intimidation calls from +91-97300-11111 citing Delta Finance." },
-      { id: "Q007", name: "Rohit Jain", alias: "R. Jain", role: "Hawala Recipient (Cluster B)", score: 0.89, tags: ["SMURFING RECEIVER", "SBI ACCT"], isSuspect: true, doc: "fir_phantom_2.txt", reason: "Received ₹15,00,000 in layered transfers forwarded through Anand Krishnan." },
-      { id: "W002", name: "Lakshmi Devi", alias: "Complainant", role: "Extortion Victim", score: 0.02, tags: ["VICTIM", "CLEARED"], isSuspect: false, doc: "fir_phantom_1.txt", reason: "Victim who filed FIR #0198 after receiving extortion threats." }
+      {
+        id: "Q006",
+        name: "Anand Krishnan",
+        alias: "A. Krishnan",
+        role: "Hidden Cross-Cluster Bridge",
+        score: 0.98,
+        tags: ["STRUCTURAL BROKER", "LOW CLUSTERING"],
+        isSuspect: true,
+        doc: "fir_phantom_4.txt",
+        reason: "Sole intermediary linking Extortion Cluster A to Laundering Cluster B.",
+        evidence: {
+          telecom: "Encrypted VoIP logs confirm 3 coordination calls with Vikram Sinha (Delta Finance) and 2 to bullion cashier Amitabh Shah.",
+          financial: "Transferred 6 round-number tranches (₹5L/₹10L, total ₹15L) to Rohit Jain within 90 minutes of extortion collection [ANO-005].",
+          spatial: "Pings registered at Nariman Point financial district cell towers.",
+          graph: "Betweenness Centrality = 0.89 (Top broker), Local Clustering < 0.05. Neutralizing this node severs extortion inflow from bullion off-ramp.",
+          statutory: "FIR #0198 co-conspirator; BNS 2023 Sec 308 (Extortion), PMLA 2002 Sec 3 (Hawala Laundering)."
+        }
+      },
+      {
+        id: "Q001",
+        name: "Vikram Sinha",
+        alias: "V. Sinha",
+        role: "Extortion Ring Leader (Cluster A)",
+        score: 0.93,
+        tags: ["EXTORTION CELL", "DELTA FINANCE"],
+        isSuspect: true,
+        doc: "fir_phantom_1.txt",
+        reason: "Coordinated intimidation calls from +91-97300-11111 citing Delta Finance.",
+        evidence: {
+          telecom: "Originated 24 threatening extortion calls from +91-97300-11111 targeting corporate executives and complainant Lakshmi Devi.",
+          financial: "Signatory on HDFC-DELTA-8810 receiving ₹42L in extorted commercial sums.",
+          spatial: "Nariman Point & Bandra cell towers during extortion demand windows.",
+          graph: "PageRank = 0.31 (Cluster A Authority). Direct control over enforcer Ravi Kumar.",
+          statutory: "Named as Accused #1 in FIR #0198; BNS 2023 Sec 308 (Extortion) and IT Act Sec 66D."
+        }
+      },
+      {
+        id: "Q007",
+        name: "Rohit Jain",
+        alias: "R. Jain",
+        role: "Hawala Recipient (Cluster B)",
+        score: 0.89,
+        tags: ["SMURFING RECEIVER", "SBI ACCT"],
+        isSuspect: true,
+        doc: "fir_phantom_2.txt",
+        reason: "Received ₹15,00,000 in layered transfers forwarded through Anand Krishnan.",
+        evidence: {
+          telecom: "Direct communications with bullion broker Amitabh Shah preceding physical gold pick-up.",
+          financial: "Received ₹15,00,000 into SBI-JAIN-1092 and remitted same to Jain Bullion Traders.",
+          spatial: "Zaveri Bazaar bullion market cell tower registration.",
+          graph: "PageRank = 0.28 (Cluster B Receiver); Terminal off-ramp conduit.",
+          statutory: "PMLA 2002 Sec 3/4 & FEMA 1999 (Illegal Bullion Conversion)."
+        }
+      },
+      {
+        id: "W002",
+        name: "Lakshmi Devi",
+        alias: "Complainant",
+        role: "Extortion Victim",
+        score: 0.02,
+        tags: ["VICTIM", "CLEARED"],
+        isSuspect: false,
+        doc: "fir_phantom_1.txt",
+        reason: "Victim who filed FIR #0198 after receiving extortion threats.",
+        evidence: {
+          telecom: "Inbound coercive calls received from +91-97300-11111; 0 outbound conspiratorial calls.",
+          financial: "Account debited ₹5,00,000 under duress; zero outbound layering to secondary conduits.",
+          spatial: "Dadar residential subscriber; formal complainant who filed FIR #0198.",
+          graph: "Betweenness = 0.000, Degree = 1 (Terminal victim node). Zero bridge authority.",
+          statutory: "Aggrieved Complainant under BNS Sec 308; Protected Witness under BNSS 2023. Exonerated from culpability under BSA Sec 63."
+        }
+      }
     ],
     alerts: [
       { id: "ANO-004", title: "Hidden Structural Broker Discovered", layer: "Layer 4 GDS Graph", severity: "CRITICAL", detail: "Anand Krishnan identified as sole bridge linking extortion and laundering clusters." },
@@ -130,9 +300,78 @@ export const CASE_METADATA = {
       }
     },
     suspects: [
-      { id: "M001", name: "Imran Khan", alias: "Imraan", role: "Primary Mule Coordinator", score: 0.97, tags: ["SIM CLONE", "PNB MULE"], isSuspect: true, doc: "fir_mirage_1.txt", reason: "Received fraudulent OTP-authenticated transfers of ₹9,00,000 during SIM outage." },
-      { id: "M002", name: "Prakash Desai", alias: "P. Desai", role: "Telecom Insider Facilitator", score: 0.94, tags: ["UNAUTHORIZED SWAP", "TOWER BKC-112"], isSuspect: true, doc: "fir_mirage_2.txt", reason: "Issued duplicate SIM on forged Aadhaar; Co-located at Tower BKC-112." },
-      { id: "M003", name: "Sunil Patil", alias: "S. Patil", role: "Mule Account Recruiter", score: 0.86, tags: ["4X SIM CARDS", "NIGHT WAVE"], isSuspect: true, doc: "fir_mirage_3.txt", reason: "Withdrew cash via ATMs between 02:00–04:00 AM immediately after SIM swap." }
+      {
+        id: "M001",
+        name: "Imran Khan",
+        alias: "Imraan",
+        role: "Primary Mule Coordinator",
+        score: 0.97,
+        tags: ["SIM CLONE", "PNB MULE"],
+        isSuspect: true,
+        doc: "fir_mirage_1.txt",
+        reason: "Received fraudulent OTP-authenticated transfers of ₹9,00,000 during SIM outage.",
+        evidence: {
+          telecom: "Controlled cloned MSISDN receiving 2FA authentication SMS between 02:00–04:00 AM.",
+          financial: "11 rapid IMPS transfers (>₹9L) siphoned into PNB & BOB mule accounts [ANO-006].",
+          spatial: "Co-located at Tower BKC-112 preceding porting request [ANO-007].",
+          graph: "PageRank = 0.36 (Primary Cyber Mule Hub). Inflow ₹9,00,000, Outflow ₹4,50,000 to crypto escrow.",
+          statutory: "FIR #0442; IT Act 2000 Sec 66C (Identity Theft) & Sec 66D (Cheating by Personation), BNS Sec 318."
+        }
+      },
+      {
+        id: "M002",
+        name: "Prakash Desai",
+        alias: "P. Desai",
+        role: "Telecom Insider Facilitator",
+        score: 0.94,
+        tags: ["UNAUTHORIZED SWAP", "TOWER BKC-112"],
+        isSuspect: true,
+        doc: "fir_mirage_2.txt",
+        reason: "Issued duplicate SIM on forged Aadhaar; Co-located at Tower BKC-112.",
+        evidence: {
+          telecom: "4 duplicate SIM ports logged within 30 minutes referencing identical fabricated Aadhaar hash.",
+          financial: "Received ₹45,000 illicit facilitation commission via untraced UPI channel.",
+          spatial: "Franchise SIM Hub store terminal in BKC; physical meeting at Tower BKC-112.",
+          graph: "Betweenness = 0.55; Critical gateway between telecom credentials and cyber syndicate.",
+          statutory: "IT Act 2000 Sec 43 (Damage to Computer System) & Sec 66C; BNS 2023 Sec 318."
+        }
+      },
+      {
+        id: "M003",
+        name: "Sunil Patil",
+        alias: "S. Patil",
+        role: "Mule Account Recruiter",
+        score: 0.86,
+        tags: ["4X SIM CARDS", "NIGHT WAVE"],
+        isSuspect: true,
+        doc: "fir_mirage_3.txt",
+        reason: "Withdrew cash via ATMs between 02:00–04:00 AM immediately after SIM swap.",
+        evidence: {
+          telecom: "Operated 4 active SIM cards during night wave; coordinated physical extraction.",
+          financial: "Withdrew ₹2,50,000 physical cash from BKC and Kurla Station ATMs within 45 minutes of drain.",
+          spatial: "Cell tower handoffs logged at Tower Kurla-W at 03:15 AM.",
+          graph: "Degree = 6, Operational cash-out handler.",
+          statutory: "FIR #0442 Accused #3; charged under BNS Sec 318 & IT Act Sec 66D."
+        }
+      },
+      {
+        id: "W003",
+        name: "Alok Tandon",
+        alias: "Victim Subscriber",
+        role: "Innocent Cyber Victim",
+        score: 0.01,
+        tags: ["VICTIM", "CLEARED"],
+        isSuspect: false,
+        doc: "fir_mirage_1.txt",
+        reason: "Legitimate subscriber whose SIM was cloned without consent; Primary Complainant.",
+        evidence: {
+          telecom: "Victim phone suffered unexpected network blackout at 22:30; 0 outbound fraudulent transfers.",
+          financial: "Net banking accounts suffered unauthorized debit drain of ₹9,00,000.",
+          spatial: "Residence in Chembur East; lodged cyber police complaint upon discovering SIM deactivation.",
+          graph: "Betweenness = 0.000, Degree = 1. Passive target node with 0 conspiratorial edges.",
+          statutory: "Complainant in FIR #0442; Certified innocent victim under IT Act Sec 43 & BSA Sec 63."
+        }
+      }
     ],
     alerts: [
       { id: "ANO-006", title: "High-Value Night-Time Fraud Wave", layer: "Layer 3 IsolationForest", severity: "CRITICAL", detail: "11 transactions > ₹4,00,000 processed between 02:00–04:00 AM." },

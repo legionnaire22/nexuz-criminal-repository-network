@@ -11,7 +11,7 @@ export function LiveInvestigationTracker({
   const steps = [
     { num: 1, label: "Ingest & Probe", desc: "Noise Filtering" },
     { num: 2, label: "Anomaly Lock", desc: "Heuristic Rules" },
-    { num: 3, label: "GNN Scoring", desc: "Syndicate Emergence" },
+    { num: 3, label: "GDS Scoring", desc: "Syndicate Emergence" },
     { num: 4, label: "Consensus", desc: "Multi-Agent Deliberation" }
   ];
 
@@ -19,7 +19,7 @@ export function LiveInvestigationTracker({
     if (isRunning) {
       if (currentPhase === 1) return { text: "PHASE 1: PROBING SIGNALS", cls: "phase-badge-probe" };
       if (currentPhase === 2) return { text: "PHASE 2: ANOMALY MATCHING", cls: "phase-badge-anomaly" };
-      if (currentPhase === 3) return { text: "PHASE 3: GNN RISK SCORING", cls: "phase-badge-gnn" };
+      if (currentPhase === 3) return { text: "PHASE 3: GDS GRAPH SCORING", cls: "phase-badge-gnn" };
       if (currentPhase === 4) return { text: "PHASE 4: AGENT CONSENSUS", cls: "phase-badge-consensus" };
       return { text: "INVESTIGATING...", cls: "phase-badge-probe" };
     }
